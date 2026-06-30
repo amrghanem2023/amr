@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Tracker - 2026 Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#F0F4F8',
+                            100: '#D9E2EC',
+                            500: '#334E68',
+                            800: '#1B365D',
+                            900: '#102A43',
+                        },
+                        accent: {
+                            teal: '#11CAA0',
+                            orange: '#FF823A',
+                            purple: '#BC84EE',
+                            lime: '#DCFD8B'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .sidebar-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    
+        @media print {
+            aside, header button, #expense-modal, #budget-settings-modal, .no-print { display: none !important; }
+            main { padding: 0 !important; }
+            body { background: white !important; }
+            .shadow-sm, .shadow-md, .shadow-xl { box-shadow: none !important; }
+        }
+
+    </style>
+
+<style id="mobile-responsive-styles">
+/* Mobile View Adjustments */
+body.mobile-view {
+    max-width: 375px;
+    margin: 0 auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    min-height: 100vh;
+    font-size: 12px !important;
+}
+body.mobile-view h1 { font-size: 18px !important; }
+body.mobile-view h2 { font-size: 16px !important; }
+body.mobile-view h3 { font-size: 14px !important; }
+body.mobile-view h4 { font-size: 13px !important; }
+body.mobile-view .card { padding: 8px !important; margin-bottom: 8px !important; }
+body.mobile-view .card-header { padding: 8px !important; font-size: 13px !important; }
+body.mobile-view .card-body { padding: 8px !important; }
+body.mobile-view .table { font-size: 11px !important; }
+body.mobile-view .table td, body.mobile-view .table th { padding: 4px !important; }
+body.mobile-view .btn { padding: 4px 8px !important; font-size: 11px !important; }
+body.mobile-view input, body.mobile-view select { font-size: 12px !important; padding: 4px !important; }
+body.mobile-view .form-label { font-size: 11px !important; margin-bottom: 2px !important; }
+body.mobile-view .form-control { font-size: 12px !important; padding: 4px 6px !important; }
+body.mobile-view .container, body.mobile-view .container-fluid { padding: 6px !important; }
+body.mobile-view .row { margin: 0 -4px !important; }
+body.mobile-view .col, body.mobile-view [class*="col-"] { padding: 0 4px !important; }
+body.mobile-view .badge { font-size: 10px !important; padding: 2px 6px !important; }
+body.mobile-view .nav-tabs { font-size: 11px !important; }
+body.mobile-view .nav-link { padding: 4px 8px !important; }
+
+/* Tablet View Adjustments */
+body.tablet-view {
+    max-width: 768px;
+    margin: 0 auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    min-height: 100vh;
+    font-size: 14px !important;
+}
+body.tablet-view h1 { font-size: 22px !important; }
+body.tablet-view h2 { font-size: 20px !important; }
+body.tablet-view h3 { font-size: 18px !important; }
+body.tablet-view .card { padding: 12px !important; }
+body.tablet-view .table { font-size: 13px !important; }
+</style>
+
+
+<style>
+/* تصغير حجم شهور الواجهة الإنجليزية */
+select.month-select, select#month, .month-dropdown {
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+    min-width: 110px !important;
+}
+
+[lang="en"] select.month-select, 
+[lang="en"] select#month,
+.en-mode .month-dropdown {
+    font-size: 11px !important;
+    min-width: 120px !important;
+}
+
+/* في الموبايل */
+.mobile-view select.month-select,
+.mobile-view select#month {
+    font-size: 10px !important;
+    min-width: 100px !important;
+}
+</style>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- App Shell Wrapper -->
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar-transition bg-navy-900 text-white w-64 flex-shrink-0 flex flex-col z-30 relative shadow-xl">
+            <!-- Brand Logo -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-navy-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-accent-teal to-blue-500 p-2.5 rounded-xl shadow-lg">
+                        <i class="fa-solid fa-wallet text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg tracking-tight leading-none text-white" data-i18n="app-title">المتتبع الذكي</h2>
+                        <span class="text-xs text-slate-400 font-medium" data-i18n="app-sub">إصدار 2026 المحترف</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-4 px-4 py-3.5 rounded-xl bg-navy-800 text-white font-semibold transition-all shadow-md group">
+                    <i class="fa-solid fa-chart-pie text-lg text-accent-teal group-hover:scale-110 transition-transform"></i>
+                    <span data-i18n="menu-dashboard">لوحة التحكم</span>
+                </a>
+                <a href="#" onclick="switchTab('expenses')" id="nav-expenses" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-navy-800 hover:text-white font-medium transition-all group">
+                    <i class="fa-solid fa-receipt text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+                    <span data-i18n="menu-expenses">المصاريف والواردات</span>
+                </a>
+                <a href="#" onclick="switchTab('categories')" id="nav-categories" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-navy-800 hover:text-white font-medium transition-all group">
+                    <i class="fa-solid fa-basket-shopping text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+                    <span data-i18n="menu-categories">تحليل المصروفات</span>
+                </a>
+                <a href="#" onclick="switchTab('debits')" id="nav-debits" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-navy-800 hover:text-white font-medium transition-all group">
+                    <i class="fa-solid fa-credit-card text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+                    <span data-i18n="menu-debits">الأقساط (تكلفة إضافية)</span>
+                </a>
+                <a href="#" onclick="switchTab('simulator')" id="nav-simulator" class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-navy-800 hover:text-white font-medium transition-all group">
+                    <i class="fa-solid fa-sliders text-lg text-slate-400 group-hover:text-white transition-colors"></i>
+                    <span data-i18n="menu-simulator">محاكي الميزانية</span>
+                </a>
+            </nav>
+
+            <!-- Bottom Note & Version -->
+            <div class="p-6 border-t border-navy-800 bg-navy-950/40 text-center">
+                <p class="text-xs text-slate-400" data-i18n="sidebar-footer">مرتبط بملف:</p>
+                <p class="text-xs font-semibold text-accent-teal truncate mt-1">smart expense tracker Desktop Full version1 2026.xlsx</p>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT CONTAINER -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            <!-- HEADER -->
+            <header class="bg-white border-b border-slate-200 h-20 px-8 flex items-center justify-between flex-shrink-0 shadow-sm">
+                <!-- Search or Title section -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-slate-600 focus:outline-none p-2 hover:bg-slate-100 rounded-lg">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h1 id="page-title" class="font-bold text-xl lg:text-2xl text-slate-800" data-i18n="title-dashboard">لوحة التحكم السريعة</h1>
+                </div>
+
+                <!-- Global Actions / Language / User Profile -->
+                <div class="flex items-center gap-4 lg:gap-6">
+                    <!-- Language Selector Toggle -->
+                    <button onclick="toggleLanguage()" class="flex items-center gap-2 px-3.5 py-2 border border-slate-200 rounded-xl hover:bg-slate-50 font-semibold transition-all text-sm text-slate-600">
+                        <i class="fa-solid fa-globe text-accent-teal text-base"></i>
+                        <span id="lang-btn-text">English</button>
+<div style="text-align: center; font-size: 12px; color: #666; margin-top: 4px;">Extra Charge</div><button style="display:none"/span>
+                    </button>
+
+                    <!-- Currency Selector -->
+                    <select id="currency-select" onchange="changeCurrency()" class="px-3.5 py-2 border border-slate-200 rounded-xl hover:bg-slate-50 font-semibold transition-all text-sm text-slate-600 bg-white">
+                        <option value="EGP">ج.م</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                        <option value="SAR">ر.س SAR</option>
+                    </select>
+
+                    <!-- Print Button -->
+                    <button onclick="window.print()" class="flex items-center gap-2 px-3.5 py-2 border border-slate-200 rounded-xl hover:bg-slate-50 font-semibold transition-all text-sm text-slate-600">
+                        <i class="fa-solid fa-print text-slate-500"></i>
+                        <span data-i18n="btn-print">طباعة</span>
+                    </button>
+
+
+                    <!-- Add Quick Income Action -->
+                    <button onclick="openModal('income')" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2.5 rounded-xl hover:opacity-90 shadow-md font-semibold text-sm transition-all transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-circle-arrow-down text-base"></i>
+                        <span data-i18n="btn-add-income">إضافة دخل</span>
+                    </button>
+
+                    <!-- Add Quick Expense Action -->
+                    <button onclick="openModal('expense')" class="flex items-center gap-2 bg-gradient-to-r from-navy-800 to-navy-900 text-white px-4 py-2.5 rounded-xl hover:opacity-90 shadow-md font-semibold text-sm transition-all transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-plus-circle text-base"></i>
+                        <span data-i18n="btn-add-expense">إضافة مصروف</span>
+                    </button>
+
+                    <!-- Profile placeholder -->
+                    <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+                        <div class="w-10 h-10 rounded-xl bg-navy-100 flex items-center justify-center font-bold text-navy-800">
+                            U
+                        </div>
+                        <div class="hidden md:block">
+                            <h4 class="text-sm font-semibold text-slate-800">المستخدم المحترف</h4>
+                            <span class="text-xs text-slate-500 font-medium">مدير الحساب</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGES SCROLLER -->
+            <main class="flex-1 overflow-y-auto p-8 bg-slate-50 space-y-6">
+
+                <!-- MONTH-BY-MONTH PILL BAR -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col gap-3">
+                    <div class="flex items-center justify-between px-1">
+                        <div class="flex items-center gap-2 text-slate-700">
+                            <i class="fa-solid fa-calendar-days text-accent-teal text-base"></i>
+                            <h4 class="font-bold text-sm lg:text-base" data-i18n="monthly-view-title">تصفية العرض حسب الشهر لعام 2026</h4>
+                        </div>
+                        <span class="text-xs bg-navy-50 text-navy-800 px-2.5 py-1 rounded-full font-bold font-inter" id="selected-month-indicator">كل الشهور</span>
+                    </div>
+                    <!-- Horizontal Scrolling pills -->
+                    <div class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar" id="monthly-pills-container">
+                        <!-- Dynamic Month Pills are generated here -->
+                    </div>
+                </div>
+
+                <!-- ------------------------------ -->
+                <!-- 1. TAB: DASHBOARD -->
+                <!-- ------------------------------ -->
+                <section id="tab-dashboard" class="space-y-8">
+                    
+                    <!-- KPI Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Card 1: Total Budget / Inflow Target -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-110 transition-transform opacity-50"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n="kpi-budget">الميزانية الشهرية المخططة</span>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="openBudgetModal()" class="text-slate-400 hover:text-navy-800 transition-colors p-1" title="تعديل الميزانية">
+                                        <i class="fa-solid fa-sliders text-sm"></i>
+                                    </button>
+                                    <div class="bg-blue-100 p-2.5 rounded-xl text-blue-600">
+                                        <i class="fa-solid fa-vault text-lg"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl lg:text-3xl font-bold text-navy-900 font-inter"><span id="kpi-budget-val">120,000</span> <span class="text-sm font-semibold text-slate-500" data-i18n="currency">ج.م</span></h3>
+                            <p class="text-xs text-slate-500 mt-2 font-semibold flex items-center gap-1">
+                                <span data-i18n="kpi-budget-note">ميزانية الصرف والمستهدفات المقررة</span>
+                            </p>
+                        </div>
+
+                        <!-- Card 2: Total Spent -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-red-50 rounded-full group-hover:scale-110 transition-transform opacity-50"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n="kpi-spent">إجمالي المصروفات الحالية</span>
+                                <div class="bg-red-100 p-2.5 rounded-xl text-red-600">
+                                    <i class="fa-solid fa-money-bill-wave text-lg"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl lg:text-3xl font-bold text-navy-900 font-inter"><span id="kpi-spent-val">78,450</span> <span class="text-sm font-semibold text-slate-500" data-i18n="currency">ج.م</span></h3>
+                            <p class="text-xs text-red-500 mt-2 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-trending-up"></i>
+                                <span id="kpi-spent-pct-label" data-i18n="kpi-spent-note">نسبة مئوية من إجمالي الدخل</span>
+                            </p>
+                        </div>
+
+                        <!-- Card 3: Remaining Balance -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-110 transition-transform opacity-50"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n="kpi-remaining">الرصيد المتبقي الحر</span>
+                                <div class="bg-emerald-100 p-2.5 rounded-xl text-emerald-600">
+                                    <i class="fa-solid fa-circle-check text-lg"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl lg:text-3xl font-bold text-emerald-600 font-inter"><span id="kpi-remaining-val">41,550</span> <span class="text-sm font-semibold text-slate-500" data-i18n="currency">ج.م</span></h3>
+                            <p class="text-xs text-emerald-600 mt-2 font-semibold" data-i18n="kpi-remaining-note">فائض أمان نشط وجاهز للادخار</p>
+                        </div>
+
+                        <!-- Card 4: Debts / Credit Line -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-50 rounded-full group-hover:scale-110 transition-transform opacity-50"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n="kpi-debts">الأقساط والالتزامات النشطة - بتكلفة إضافية - بتكلفة إضافية</span>
+                                <div class="bg-amber-100 p-2.5 rounded-xl text-amber-600">
+                                    <i class="fa-solid fa-credit-card text-lg"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl lg:text-3xl font-bold text-navy-900 font-inter"><span id="kpi-debts-val">12,600</span> <span class="text-sm font-semibold text-slate-500" data-i18n="currency">ج.م</span></h3>
+                            <p class="text-xs text-slate-500 mt-2 font-semibold" data-i18n="kpi-debts-note">مسجلة ضمن خطة الدفع والسداد</p>
+                        </div>
+                    </div>
+
+                    <!-- Category Warnings Alert Box if category budget is breached -->
+                    <div id="budget-alerts-container" class="hidden space-y-2">
+                        <!-- Dynamic Warnings populated here -->
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Line Chart: Expense Trend -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800" id="chart-trend-title-text" data-i18n="chart-trend-title">منحنى المصروفات الشهري لعام 2026</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5" id="chart-trend-desc-text" data-i18n="chart-trend-desc">مراقبة الارتفاع والانخفاض بشكل تفاعلي</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 bg-navy-800 rounded-full"></span>
+                                    <span class="text-xs text-slate-500 font-semibold" data-i18n="chart-trend-legend">معدل الإنفاق</span>
+                                </div>
+                            </div>
+                            <div class="h-80 relative">
+                                <canvas id="chartTrend"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Doughnut Chart: Category Distribution -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800" data-i18n="chart-pie-title">توزيع المصروفات حسب الفئة</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5" data-i18n="chart-pie-desc">تحديد منافذ التسرب المالي الكبرى</p>
+                                </div>
+                            </div>
+                            <div class="h-64 relative flex items-center justify-center">
+                                <canvas id="chartCategories"></canvas>
+                            </div>
+                            <!-- Small dynamic legend summary -->
+                            <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-slate-100 text-xs">
+                                <div class="flex items-center gap-1.5 font-semibold text-slate-600">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#DCFD8B]"></span>
+                                    <span data-i18n="cat-groceries">بقالة</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 font-semibold text-slate-600">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#BC84EE]"></span>
+                                    <span data-i18n="cat-installments">أقساط</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 font-semibold text-slate-600">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#FF823A]"></span>
+                                    <span data-i18n="cat-utilities">فواتير</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 font-semibold text-slate-600">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#38BDF8]"></span>
+                                    <span data-i18n="cat-leisure">ترفيه</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Grid: Recent Transactions & Payment Method Stats -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Recent Transactions (List) -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800" data-i18n="recent-title">آخر العمليات المضافة</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5" data-i18n="recent-desc">تحديثات حية لأحدث التكاليف المضافة</p>
+                                </div>
+                                <button onclick="switchTab('expenses')" class="text-accent-teal hover:text-navy-800 font-semibold text-sm transition-colors flex items-center gap-1">
+                                    <span data-i18n="view-all">عرض الجميع</span>
+                                    <i class="fa-solid fa-arrow-left text-xs rtl:inline hidden"></i>
+                                    <i class="fa-solid fa-arrow-right text-xs ltr:inline hidden"></i>
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-right rtl:text-right ltr:text-left">
+                                    <thead>
+                                        <tr class="text-slate-400 border-b border-slate-100 font-semibold">
+                                            <th class="pb-3" data-i18n="th-date">التاريخ</th>
+                                            <th class="pb-3" data-i18n="th-item">البند / التفاصيل</th>
+                                            <th class="pb-3" data-i18n="th-cat">الفئة</th>
+                                            <th class="pb-3" data-i18n="th-method">طريقة الدفع</th>
+                                            <th class="pb-3 text-left rtl:text-left ltr:text-right" data-i18n="th-amount">المبلغ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-transactions-list" class="divide-y divide-slate-50 font-semibold">
+                                        <!-- Populate dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Bar Chart: Payment Methods Stats -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800" data-i18n="chart-method-title">مقارنة طرق الدفع</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5" data-i18n="chart-method-desc">كاش، فيزا، أو عمليات أونلاين</p>
+                                </div>
+                            </div>
+                            <div class="h-64 relative">
+                                <canvas id="chartMethods"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ------------------------------ -->
+                <!-- 2. TAB: ALL EXPENSES TABLE -->
+                <!-- ------------------------------ -->
+                <section id="tab-expenses" class="space-y-6 hidden">
+                    <!-- Control Bar -->
+                    <div class="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+                            <!-- Search -->
+                            <div class="relative w-full md:w-64">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                                </span>
+                                <input type="text" id="expense-search" oninput="filterExpenses()" class="w-full pr-10 pl-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm font-semibold" placeholder="ابحث عن معاملة...">
+                            </div>
+
+                            <!-- Filter Category -->
+                            <select id="expense-cat-filter" onchange="filterExpenses()" class="w-full md:w-44 px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm font-semibold bg-white text-slate-600">
+                                <option value="all" data-i18n="opt-all-cats">كل الفئات</option>
+                                <option value="بقالة" data-i18n="cat-groceries">بقالة</option>
+                                <option value="أقساط" data-i18n="cat-installments">أقساط</option>
+                                <option value="فواتير" data-i18n="cat-utilities">فواتير</option>
+                                <option value="ترفيه" data-i18n="cat-leisure">ترفيه</option>
+                                <option value="دخل" data-i18n="type-income">كل الواردات المضافة</option>
+                            </select>
+
+                            <!-- Filter Payment Method -->
+                            <select id="expense-method-filter" onchange="filterExpenses()" class="w-full md:w-44 px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm font-semibold bg-white text-slate-600">
+                                <option value="all" data-i18n="opt-all-methods">كل طرق الدفع</option>
+                                <option value="كاش" data-i18n="method-cash">كاش (Cash)</option>
+                                <option value="فيزا" data-i18n="method-visa">فيزا (Visa)</option>
+                                <option value="أونلاين" data-i18n="method-online">أونلاين (Online)</option>
+                            </select>
+                        </div>
+
+                        <!-- Metrics Summary of selected -->
+                        <div class="text-slate-500 font-semibold text-sm">
+                            <span data-i18n="total-filtered">إجمالي الفلترة الحالية:</span>
+<div style="font-size: 12px; color: #d32f2f; margin-top: 8px; font-weight: 500;">ملحوظة: لا يجوز وضع المصروفات والدخل</div>
+                            <span id="filtered-total-val" class="text-navy-800 font-bold font-inter text-base">0</span> <span class="text-xs" data-i18n="currency">ج.م</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Table card -->
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-right rtl:text-right ltr:text-left">
+                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 font-bold uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4" data-i18n="th-date">التاريخ</th>
+                                        <th class="px-6 py-4" data-i18n="th-item">البند / التفاصيل</th>
+                                        <th class="px-6 py-4" data-i18n="th-cat">الفئة</th>
+                                        <th class="px-6 py-4" data-i18n="th-method">طريقة الدفع</th>
+                                        <th class="px-6 py-4 text-left rtl:text-left ltr:text-right" data-i18n="th-amount">المبلغ</th>
+                                        <th class="px-6 py-4 text-center" data-i18n="th-action">إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body" class="divide-y divide-slate-100 font-semibold">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------ -->
+                <!-- 3. TAB: CATEGORY DETAILED VIEW -->
+                <!-- ------------------------------ -->
+                <section id="tab-categories" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left pane: Food subcategory distribution -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2 space-y-6">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800" data-i18n="groceries-detail-title">التقسيم المثالى للمصاريف 40% 35% 25%</h3>
+                                <p class="text-xs text-slate-400 mt-0.5" data-i18n="groceries-detail-desc">مستوحى ومطابق لصفحة Food & Groceries UC في ملفك</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Food breakdown progress lines -->
+                                <div id="food-breakdown-list" class="space-y-4 font-semibold">
+                                    <!-- Dynamic breakdown -->
+                                </div>
+                                <div class="flex items-center justify-center p-4">
+                                    <div class="w-full max-w-[240px] relative">
+                                        <canvas id="chartFoodBreakdown"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right pane: Quick summary list -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800 mb-2" data-i18n="groceries-summary-title">إجمالي المصاريف</h3>
+                                <div class="bg-accent-lime/20 text-navy-900 px-4 py-3 rounded-xl border border-accent-lime/30 font-bold mb-6 flex justify-between items-center">
+                                    <span data-i18n="cat-groceries">قيمة</span>
+                                    <span class="text-xl font-inter"><span id="groceries-sum-label">4,850</span> ج.م</span>
+                                </div>
+                                <p class="text-sm text-slate-500 leading-relaxed font-medium" data-i18n="groceries-summary-text">
+                                    التقسيم المثالي للمصاريف بنسبة 40 – 35 – 25 يعني توزيع الدخل الشهري بشكل متوازن بين ثلاث فئات رئيسية: 40% للاحتياجات الأساسية مثل السكن والطعام والفواتير، 35% للرغبات والرفاهية مثل الترفيه والسفر والتسوق، و25% للادخار والاستثمار لضمان الأمان المالي المستقبلي. هذا الأسلوب يساعد على تحقيق توازن بين العيش اليومي والمتعة والادخار، ويمنع العجز المالي مع وجود احتياطي للطوارئ
+                                </p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 space-y-3 font-semibold text-xs text-slate-400">
+                                <div class="flex justify-between">
+                                    <span data-i18n="sub-meat">شريحة 2</span>
+                                    <span class="text-slate-600">35%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-i18n="sub-delivery">التوصيل والمطاعم</span>
+                                    <span class="text-slate-600">25%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-i18n="sub-staples">الأرز والسلع الأساسية</span>
+                                    <span class="text-slate-600">40%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------ -->
+                <!-- 4. TAB: DEBITS OVERVIEW -->
+                <!-- ------------------------------ -->
+                <section id="tab-debits" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Active Debts Cards -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                <h3 class="font-bold text-lg text-slate-800 mb-6" data-i18n="debits-active-title">خطط الأقساط والمدفوعات الآجلة المجدولة</h3>
+                                <div class="space-y-6" id="debits-list">
+                                    <!-- Dynamic credit cards installments -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Debts logic & Advice card -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800 mb-4" data-i18n="debits-info-title">إدارة الأقساط والبطاقات الائتمانية</h3>
+                                <p class="text-sm text-slate-500 leading-relaxed font-medium mb-4" data-i18n="debits-info-p1">
+                                    في شاشة `Debit overview` للملف الخاص بك، تم جدولة المدفوعات عبر الإنترنت (مثل المشتريات الآجلة وخطط سداد الفيزا).
+                                </p>
+                                <p class="text-sm text-slate-500 leading-relaxed font-medium" data-i18n="debits-info-p2">
+                                    مراقبتك للأقساط بانتظام يضمن لك حماية درجتك الائتمانية وعدم الوقوع في تراكمات الفوائد غير الورغوب فيها.
+                                </p>
+                            </div>
+                            <div class="mt-6 p-4 bg-amber-50 text-amber-800 rounded-xl border border-amber-100 text-xs font-semibold leading-normal flex gap-3 items-start">
+                                <i class="fa-solid fa-lightbulb text-lg text-amber-500 flex-shrink-0"></i>
+                                <span data-i18n="debits-warning">تنصيحة: ينصح بألا تتجاوز إجمالي الأقساط الشهرية نسبة 35% من دخلك الصافي لتفادي الضغوطات المالية المفاجئة.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ------------------------------ -->
+                <!-- 5. TAB: BUDGET SIMULATOR -->
+                <!-- ------------------------------ -->
+                <section id="tab-simulator" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Simulator configuration pane -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2 space-y-6">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800" data-i18n="sim-title">محاكي ميزانيتك التفاعلي</h3>
+                                <p class="text-xs text-slate-400 mt-0.5" data-i18n="sim-desc">قم بتعديل وتجريب الميزانية وتأثيرها على الرصيد المتبقي مباشرة</p>
+                            </div>
+
+                            <div class="space-y-6 font-semibold">
+                                <!-- Category 1: Groceries Budget -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm text-slate-600">
+                                        <span data-i18n="cat-groceries">ميزانية البقالة والأغذية</span>
+                                        <span class="font-bold font-inter text-navy-800"><span id="sim-val-groceries">25000</span> ج.م</span>
+                                    </div>
+                                    <input type="range" id="sim-input-groceries" min="1000" max="40000" step="1000" value="15000" oninput="runSimulation()" class="w-full accent-navy-800">
+                                </div>
+
+                                <!-- Category 2: Installments Budget -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm text-slate-600">
+                                        <span data-i18n="cat-installments">ميزانية الديون والأقساط</span>
+                                        <span class="font-bold font-inter text-navy-800"><span id="sim-val-installments">15000</span> ج.م</span>
+                                    </div>
+                                    <input type="range" id="sim-input-installments" min="1000" max="30000" step="1000" value="10000" oninput="runSimulation()" class="w-full accent-navy-800">
+                                </div>
+
+                                <!-- Category 3: Utilities Budget -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm text-slate-600">
+                                        <span data-i18n="cat-utilities">ميزانية الفواتير والخدمات العامة</span>
+                                        <span class="font-bold font-inter text-navy-800"><span id="sim-val-utilities">10000</span> ج.م</span>
+                                    </div>
+                                    <input type="range" id="sim-input-utilities" min="500" max="20000" step="500" value="5000" oninput="runSimulation()" class="w-full accent-navy-800">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simulation outcome box -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                            <div class="space-y-6">
+                                <h3 class="font-bold text-lg text-slate-800" data-i18n="sim-outcome">النتائج التقديرية الحية</h3>
+                                
+                                <div class="p-4 bg-navy-50 rounded-xl space-y-1 text-center font-semibold border border-navy-100">
+                                    <span class="text-xs text-slate-400 uppercase" data-i18n="sim-total-calc">مجموع الميزانية المقترح</span>
+                                    <h4 class="text-3xl font-bold text-navy-800 font-inter"><span id="sim-total-calculated">50,000</span> <span class="text-sm font-semibold">ج.م</span></h4>
+                                </div>
+
+                                <div class="space-y-4 font-semibold text-sm">
+                                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                                        <span class="text-slate-500" data-i18n="sim-state">حالة الأمان والادخار</span>
+                                        <span id="sim-security-status" class="text-emerald-600">آمن وممتاز</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                                        <span class="text-slate-500" data-i18n="sim-savings">المبلغ المتوفر للادخار</span>
+                                        <span class="text-emerald-600 font-inter font-bold" id="sim-savings-calculated">+15,000 ج.م</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="applySimulatedBudget()" class="w-full mt-6 bg-accent-teal hover:bg-emerald-600 text-navy-950 font-bold py-3.5 rounded-xl transition-colors shadow-md text-sm" data-i18n="sim-btn-apply">
+                                اعتماد هذه الميزانية
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- -------------------------------- -->
+    <!-- QUICK ACTION: ENTRY/EDIT MODAL -->
+    <!-- -------------------------------- -->
+    <div id="expense-modal" class="fixed inset-0 bg-slate-900/60 z-50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg border border-slate-100 shadow-2xl overflow-hidden transition-all transform scale-95 duration-200">
+            <!-- Modal Header -->
+            <div class="bg-navy-900 text-white px-6 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-wallet text-xl text-accent-teal"></i>
+                    <h3 id="modal-heading-text" class="font-bold text-lg" data-i18n="modal-title">تسجيل معاملة جديدة</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form onsubmit="saveExpense(event)" class="p-6 space-y-4 font-semibold">
+                <!-- Transaction Type & Date -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-type">نوع المعاملة</label>
+                        <select id="form-type" onchange="toggleModalFields()" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm bg-white text-slate-700">
+                            <option value="expense" data-i18n="type-expense">مصروف</option>
+                            <option value="income" data-i18n="type-income">دخل</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-date">التاريخ</label>
+                        <input type="date" id="form-date" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-1.5">
+                    <label id="lbl-item-desc" class="text-xs text-slate-500" data-i18n="lbl-item">البند والتفاصيل</label>
+                    <input type="text" id="form-item" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm" placeholder="مثال: شراء دجاج ولحوم">
+                </div>
+
+                <!-- Category & Payment Method wrapper -->
+                <div id="dynamic-expense-fields" class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-cat">الفئة</label>
+                        <select id="form-cat" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm bg-white text-slate-700">
+                            <option value="بقالة" data-i18n="cat-groceries">بقالة</option>
+                            <option value="أقساط" data-i18n="cat-installments">أقساط</option>
+                            <option value="فواتير" data-i18n="cat-utilities">فواتير</option>
+                            <option value="ترفيه" data-i18n="cat-leisure">ترفيه</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-method">طريقة الدفع</label>
+                        <select id="form-method" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm bg-white text-slate-700">
+                            <option value="كاش" data-i18n="method-cash">كاش (Cash)</option>
+                            <option value="فيزا" data-i18n="method-visa">فيزا (Visa)</option>
+                            <option value="أونلاين" data-i18n="method-online">أونلاين (Online)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Income Source category (hidden by default) -->
+                <div id="dynamic-income-fields" class="space-y-1.5 hidden">
+                    <label class="text-xs text-slate-500" data-i18n="lbl-source">مصدر الدخل المالي</label>
+                    <select id="form-income-cat" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm bg-white text-slate-700">
+                        <option value="راتب">الراتب الأساسي</option>
+                        <option value="عمل مستقل">عمل حر / مستقل</option>
+                        <option value="أرباح استثمار">أرباح استثمارية</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+
+                <!-- Amount -->
+                <div class="space-y-1.5">
+                    <label class="text-xs text-slate-500" data-i18n="lbl-amount">المبلغ المالي</label>
+                    <div class="relative">
+                        <input type="number" id="form-amount" required step="0.01" min="0.1" class="w-full pr-14 pl-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm font-inter font-bold" placeholder="0.00">
+                        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 text-xs border-r border-slate-200 h-full bg-slate-50 px-3 rounded-r-xl" data-i18n="currency">ج.م</span>
+                    </div>
+                </div>
+
+                <!-- Action Button inside form -->
+                <button type="submit" id="btn-submit-action" class="w-full bg-gradient-to-r from-navy-800 to-navy-900 text-white py-3 rounded-xl hover:opacity-90 transition-all font-bold text-sm shadow-md mt-4" data-i18n="btn-save">
+                    حفظ المعاملة
+                </button>
+            
+                <!-- Installment Plan Section -->
+                <div id="installmentSection" class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hidden">
+                    <label class="flex items-center gap-2 mb-3">
+                        <input type="checkbox" id="isInstallment" class="w-4 h-4 text-teal-600 rounded">
+                        <span class="font-semibold" data-i18n="installment-purchase">شراء بالتقسيط</span>
+                    </label>
+                    <div id="installmentDetails" class="hidden">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm mb-1" data-i18n="total-months">عدد الشهور</label>
+                                <input type="number" id="installmentMonths" min="1" max="60" value="12" 
+                                       class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1" data-i18n="monthly-amount">القسط الشهري</label>
+                                <input type="text" id="monthlyAmount" readonly 
+                                       class="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- -------------------------------- -->
+    <!-- BUDGET SETTINGS MODAL -->
+    <!-- -------------------------------- -->
+    <div id="budget-settings-modal" class="fixed inset-0 bg-slate-900/60 z-50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg border border-slate-100 shadow-2xl overflow-hidden transition-all transform scale-95 duration-200">
+            <div class="bg-navy-900 text-white px-6 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-sliders text-xl text-accent-teal"></i>
+                    <h3 class="font-bold text-lg" data-i18n="budget-settings-title">تعديل قيم الميزانية والمستهدفات</h3>
+                </div>
+                <button onclick="closeBudgetModal()" class="text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="saveBudgetSettings(event)" class="p-6 space-y-4 font-semibold">
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs text-slate-500" data-i18n="lbl-total-budget-limit">إجمالي الميزانية المخططة للمصاريف (شهرياً)</label>
+                    <input type="number" id="input-total-budget" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-teal/50 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-limit-groceries">الحد الأقصى للبقالة</label>
+                        <input type="number" id="input-limit-groceries" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-limit-installments">الحد الأقصى للأقساط</label>
+                        <input type="number" id="input-limit-installments" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-limit-utilities">الحد الأقصى للفواتير</label>
+                        <input type="number" id="input-limit-utilities" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-slate-500" data-i18n="lbl-limit-leisure">الحد الأقصى للترفيه</label>
+                        <input type="number" id="input-limit-leisure" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-accent-teal hover:bg-emerald-600 text-navy-950 py-3 rounded-xl transition-all font-bold text-sm shadow-md mt-4" data-i18n="btn-save-budget-settings">
+                    حفظ وتحديث الميزانية
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- -------------------------------- -->
+    <!-- CUSTOM DIALOGS & ALERTS -->
+    <!-- -------------------------------- -->
+    <!-- Custom Confirm Delete Modal -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-slate-900/60 z-50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md border border-slate-100 shadow-2xl p-6 text-center transform scale-95 transition-all duration-200">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-2" data-i18n="confirm-delete-title">هل أنت متأكد؟</h3>
+            <p class="text-sm text-slate-500 mb-6" data-i18n="confirm-delete-desc">سيتم حذف هذا البند نهائياً من سجل المعاملات اليومية والرسوم البيانية.</p>
+            <div class="flex gap-3 justify-center">
+                <button id="confirm-delete-btn" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm" data-i18n="confirm-delete-btn-label">نعم، احذف</button>
+                <button onclick="closeConfirmDelete()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-colors border border-slate-200" data-i18n="btn-cancel">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Success Toast/Notification -->
+    <div id="custom-toast" class="fixed bottom-6 right-6 left-6 md:left-auto md:w-96 bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+        <div id="toast-icon-wrapper" class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+        </div>
+        <div class="flex-1">
+            <p id="toast-message" class="text-sm font-semibold"></p>
+        </div>
+        <button onclick="dismissToast()" class="text-slate-400 hover:text-white">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+
+    <!-- --------------------------------- -->
+    <!-- DYNAMIC JAVASCRIPT LOGIC -->
+    <!-- --------------------------------- -->
+    <script>
+        // Set Default Date in form
+        document.getElementById('form-date').valueAsDate = new Date();
+
+        // Application State
+        let currentLanguage = 'ar';
+        let currentTab = 'dashboard';
+        let selectedMonth = 'all'; // 'all', '01', '02', ..., '12'
+        let editId = null; 
+        let deleteTargetId = null;
+
+        // Editable Global Budget Configurations (Limits)
+        let budgetSettings = {
+            totalPlanned: 110000,
+            groceriesLimit: 30000,
+            installmentsLimit: 25000,
+            utilitiesLimit: 15000,
+            leisureLimit: 15000
+        };
+
+        let expensesData = [
+            // Month 01: January 2026
+            { id: 101, date: '2026-01-01', item: 'الراتب الأساسي لشهر يناير', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 102, date: '2026-01-15', item: 'عمل مستقل واستشارات برمجية', category: 'دخل', method: 'أونلاين', amount: 25000, type: 'income' },
+            { id: 1, date: '2026-01-05', item: 'شراء لحم بقري بلدي', category: 'بقالة', method: 'كاش', amount: 3200, type: 'expense' },
+            { id: 2, date: '2026-01-08', item: 'أرز ولوازم مطبخ أساسية', category: 'بقالة', method: 'كاش', amount: 1450, type: 'expense' },
+            { id: 3, date: '2026-01-12', item: 'دليفري عشاء عائلي', category: 'ترفيه', method: 'أونلاين', amount: 1350, type: 'expense' },
+            { id: 4, date: '2026-01-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 5, date: '2026-01-18', item: 'فاتورة الكهرباء والغاز', category: 'فواتير', method: 'أونلاين', amount: 1850, type: 'expense' },
+            { id: 6, date: '2026-01-20', item: 'شراء خضراوات وفاكهة الأسبوع', category: 'بقالة', method: 'كاش', amount: 1600, type: 'expense' },
+            { id: 7, date: '2026-01-24', item: 'اشتراك نت منزلي فائق السرعة', category: 'فواتير', method: 'أونلاين', amount: 950, type: 'expense' },
+            { id: 8, date: '2026-01-25', item: 'حساب مشتريات نون قسط أونلاين', category: 'أقساط', method: 'أونلاين', amount: 1200, type: 'expense' },
+            { id: 9, date: '2026-01-27', item: 'خبز وحلويات مخبز آلي', category: 'بقالة', method: 'كاش', amount: 850, type: 'expense' },
+            { id: 10, date: '2026-01-28', item: 'قسط فيزا تسوق البنك الأهلي', category: 'أقساط', method: 'فيزا', amount: 3000, type: 'expense' },
+            
+            // Month 02: February 2026
+            { id: 103, date: '2026-02-01', item: 'الراتب الأساسي لشهر فبراير', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 13, date: '2026-02-02', item: 'فاتورة مياه مجمعة', category: 'فواتير', method: 'كاش', amount: 1180, type: 'expense' },
+            { id: 14, date: '2026-02-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 15, date: '2026-02-25', item: 'حساب مشتريات نون قسط أونلاين', category: 'أقساط', method: 'أونلاين', amount: 1200, type: 'expense' },
+            { id: 16, date: '2026-02-28', item: 'قسط فيزا تسوق البنك الأهلي', category: 'أقساط', method: 'فيزا', amount: 3000, type: 'expense' },
+            { id: 17, date: '2026-02-10', item: 'تجهيزات سوبرماركت كاملة', category: 'بقالة', method: 'فيزا', amount: 5200, type: 'expense' },
+            
+            // Month 03: March 2026
+            { id: 104, date: '2026-03-01', item: 'الراتب الأساسي لشهر مارس', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 18, date: '2026-03-05', item: 'خضراوات ولحوم طازجة', category: 'بقالة', method: 'كاش', amount: 4450, type: 'expense' },
+            { id: 19, date: '2026-03-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 20, date: '2026-03-20', item: 'عشاء بمطعم عائلي ترفيهي', category: 'ترفيه', method: 'كاش', amount: 1750, type: 'expense' },
+            
+            // Month 04: April 2026
+            { id: 105, date: '2026-04-01', item: 'الراتب الأساسي لشهر أبريل', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 21, date: '2026-04-04', item: 'شراء مستلزمات بقالة الشهر الكبرى', category: 'بقالة', method: 'فيزا', amount: 6200, type: 'expense' },
+            { id: 22, date: '2026-04-12', item: 'فواتير الغاز والإنترنت المجمعة', category: 'فواتير', method: 'أونلاين', amount: 1450, type: 'expense' },
+            { id: 23, date: '2026-04-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 24, date: '2026-04-20', item: 'تذاكر سينما وألعاب ترفيهية', category: 'ترفيه', method: 'كاش', amount: 1200, type: 'expense' },
+            
+            // Month 05: May 2026
+            { id: 106, date: '2026-05-01', item: 'الراتب الأساسي لشهر مايو', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 25, date: '2026-05-08', item: 'طلب لحوم طازجة ودواجن', category: 'بقالة', method: 'كاش', amount: 4800, type: 'expense' },
+            { id: 26, date: '2026-05-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 27, date: '2026-05-18', item: 'فاتورة صيانة السيارة الطارئة', category: 'فواتير', method: 'فيزا', amount: 3500, type: 'expense' },
+            { id: 28, date: '2026-05-28', item: 'قسط فيزا تسوق البنك الأهلي', category: 'أقساط', method: 'فيزا', amount: 3000, type: 'expense' },
+            
+            // Month 06: June 2026
+            { id: 107, date: '2026-06-01', item: 'الراتب الأساسي لشهر يونيو', category: 'دخل', method: 'أونلاين', amount: 100000, type: 'income' },
+            { id: 29, date: '2026-06-10', item: 'مستلزمات منزلية وبقالة', category: 'بقالة', method: 'فيزا', amount: 7500, type: 'expense' },
+            { id: 30, date: '2026-06-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 31, date: '2026-06-20', item: 'اشتراك النادي الرياضي الصيفي', category: 'ترفيه', method: 'أونلاين', amount: 5000, type: 'expense' },
+            
+            // Month 07: July 2026
+            { id: 108, date: '2026-07-01', item: 'الراتب الأساسي لشهر يوليو', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 32, date: '2026-07-05', item: 'لحوم وعزومة صيفية عائلية', category: 'بقالة', method: 'كاش', amount: 6800, type: 'expense' },
+            { id: 33, date: '2026-07-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 34, date: '2026-07-22', item: 'رحلة بحرية ترفيهية عائلية للبلد', category: 'ترفيه', method: 'كاش', amount: 9500, type: 'expense' },
+            
+            // Month 08: August 2026
+            { id: 109, date: '2026-08-01', item: 'الراتب الأساسي لشهر أغسطس', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 35, date: '2026-08-10', item: 'شراء احتياجات المطبخ والأرز الأساسي', category: 'بقالة', method: 'كاش', amount: 3900, type: 'expense' },
+            { id: 36, date: '2026-08-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 37, date: '2026-08-25', item: 'قسط فيزا تسوق البنك الأهلي', category: 'أقساط', method: 'فيزا', amount: 3000, type: 'expense' },
+            { id: 38, date: '2026-08-28', item: 'فاتورة الكهرباء والماء (فترة الصيف المرتفعة)', category: 'فواتير', method: 'أونلاين', amount: 2400, type: 'expense' },
+            
+            // Month 09: September 2026
+            { id: 110, date: '2026-09-01', item: 'الراتب الأساسي لشهر سبتمبر', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 39, date: '2026-09-08', item: 'أدوات ومستلزمات المدارس والمكتبة للأولاد', category: 'ترفيه', method: 'فيزا', amount: 4500, type: 'expense' },
+            { id: 40, date: '2026-09-12', item: 'شراء دواجن وخضار طازج', category: 'بقالة', method: 'كاش', amount: 3100, type: 'expense' },
+            { id: 41, date: '2026-09-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            
+            // Month 10: October 2026
+            { id: 111, date: '2026-10-01', item: 'الراتب الأساسي لشهر أكتوبر', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 42, date: '2026-10-04', item: 'فاتورة صيانة دورية لأجهزة المطبخ', category: 'فواتير', method: 'كاش', amount: 1500, type: 'expense' },
+            { id: 43, date: '2026-10-10', item: 'مشتريات بقالة من كارفور بقسط الفيزا', category: 'بقالة', method: 'فيزا', amount: 7200, type: 'expense' },
+            { id: 44, date: '2026-10-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            
+            // Month 11: November 2026
+            { id: 112, date: '2026-11-01', item: 'الراتب الأساسي لشهر نوفمبر', category: 'دخل', method: 'أونلاين', amount: 95000, type: 'income' },
+            { id: 45, date: '2026-11-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 46, date: '2026-11-20', item: 'شراء ملابس شتوية للأولاد (الجمعة البيضاء)', category: 'ترفيه', method: 'أونلاين', amount: 6800, type: 'expense' },
+            { id: 47, date: '2026-11-24', item: 'بقالة وتجهيز مأكولات شتوية دافئة', category: 'بقالة', method: 'كاش', amount: 4100, type: 'expense' },
+            
+            // Month 12: December 2026
+            { id: 113, date: '2026-12-01', item: 'الراتب الأساسي لشهر ديسمبر', category: 'دخل', method: 'أونلاين', amount: 110000, type: 'income' },
+            { id: 48, date: '2026-12-10', item: 'احتفالات وتجهيزات رأس السنة الجديدة', category: 'ترفيه', method: 'فيزا', amount: 5500, type: 'expense' },
+            { id: 49, date: '2026-12-15', item: 'قسط تكييف صالون شهري', category: 'أقساط', method: 'فيزا', amount: 2500, type: 'expense' },
+            { id: 50, date: '2026-12-20', item: 'فاتورة الغاز والكهرباء والإنترنت الختامية', category: 'فواتير', method: 'أونلاين', amount: 1950, type: 'expense' },
+            { id: 51, date: '2026-12-25', item: 'مشتريات سوبرماركت نهاية العام كاملة', category: 'بقالة', method: 'كاش', amount: 8200, type: 'expense' }
+        ];
+
+        // Translation Dictionary
+        const translations = {
+            'installment-purchase': { ar: 'شراء بالتقسيط', en: 'Installment Purchase' },
+            'total-months': { ar: 'عدد الشهور', en: 'Total Months' },
+            'monthly-amount': { ar: 'القسط الشهري', en: 'Monthly Amount' },
+            ar: {
+                'app-title': 'المتتبع الذكي',
+                'app-sub': 'إصدار 2026 المحترف',
+                'menu-dashboard': 'لوحة التحكم',
+                'menu-expenses': 'المصاريف والواردات',
+                'menu-categories': 'تحليل المصروفات',
+                'menu-debits': 'الأقساط (تكلفة إضافية)',
+                'menu-simulator': 'محاكي الميزانية',
+                'sidebar-footer': 'مرتبط بملف:',
+                'title-dashboard': 'لوحة التحكم السريعة',
+                'title-expenses': 'دفتر العمليات والمصاريف التفصيلي',
+                'title-categories': 'تحليل المأكولات والأغذية',
+                'title-debits': 'لوحة الديون والأقساط الائتمانية',
+                'title-simulator': 'محاكي وسيناريوهات الميزانية',
+                'btn-add-expense': 'إضافة مصروف',
+                'btn-add-income': 'إضافة دخل',
+                'kpi-budget': 'الميزانية الشهرية المخططة',
+                'kpi-spent': 'إجمالي المصروفات',
+                'kpi-remaining': 'الرصيد المتبقي الحر',
+                'kpi-debts': 'الأقساط والالتزامات النشطة - بتكلفة إضافية - بتكلفة إضافية',
+                'kpi-budget-note': 'ميزانية الصرف والمستهدفات المقررة',
+                'kpi-spent-note': 'نسبة الإنفاق من الواردات المقررة',
+                'kpi-remaining-note': 'فائض أمان نشط وجاهز للادخار',
+                'kpi-debts-note': 'مسجلة ضمن خطة الدفع والسداد',
+                'chart-trend-title': 'منحنى المصروفات لعام 2026',
+                'chart-trend-desc': 'مراقبة الارتفاع والانخفاض بشكل تفاعلي',
+                'chart-trend-legend': 'معدل الإنفاق',
+                'chart-pie-title': 'توزيع المصروفات حسب الفئة',
+                'chart-pie-desc': 'تحديد منافذ التسرب المالي الكبرى',
+                'chart-method-title': 'مقارنة طرق الدفع',
+                'chart-method-desc': 'كاش، فيزا، أو عمليات أونلاين',
+                'recent-title': 'آخر العمليات المضافة',
+                'recent-desc': 'تحديثات حية لأحدث التكاليف المضافة',
+                'view-all': 'عرض الجميع',
+                'th-date': 'التاريخ',
+                'th-item': 'البند / التفاصيل',
+                'th-cat': 'الفئة',
+                'th-method': 'طريقة الدفع',
+                'th-amount': 'المبلغ',
+                'th-action': 'إجراءات',
+                'currency': 'ج.م',
+                'groceries-detail-title': 'التقسيم المثالى للمصاريف 40% 35% 25%',
+                'groceries-detail-desc': 'مستوحى ومطابق لصفحة Food & Groceries UC في ملفك',
+                'groceries-summary-title': 'إجمالي المصاريف',
+                'groceries-summary-text': 'التقسيم المثالي للمصاريف بنسبة 40 – 35 – 25 يعني توزيع الدخل الشهري بشكل متوازن بين ثلاث فئات رئيسية: 40% للاحتياجات الأساسية مثل السكن والطعام والفواتير، 35% للرغبات والرفاهية مثل الترفيه والسفر والتسوق، و25% للادخار والاستثمار لضمان الأمان المالي المستقبلي. هذا الأسلوب يساعد على تحقيق توازن بين العيش اليومي والمتعة والادخار، ويمنع العجز المالي مع وجود احتياطي للطوارئ',
+                'sub-meat': 'شريحة 2',
+                'sub-delivery': 'التوصيل والمطاعم',
+                'sub-staples': 'الأرز والسلع الأساسية',
+                'debits-active-title': 'خطط الأقساط والمدفوعات الآجلة المجدولة',
+                'debits-info-title': 'إدارة الأقساط والبطاقات الائتمانية',
+                'debits-info-p1': 'في شاشة `Debit overview` للملف الخاص بك، تم جدولة المدفوعات عبر الإنترنت (مثل المشتريات الآجلة وخطط سداد الفيزا).',
+                'debits-info-p2': 'مراقبتك للأقساط بانتظام يضمن لك حماية درجتك الائتمانية وعدم الوقوع في تراكمات الفوائد غير المرغوب فيها.',
+                'debits-warning': 'تنصيحة: ينصح بألا تتجاوز إجمالي الأقساط الشهرية نسبة 35% من دخلك الصافي لتفادي الضغوطات المالية المفاجئة.',
+                'sim-title': 'محاكي ميزانيتك التفاعلي',
+                'sim-desc': 'قم بتعديل وتجريب الميزانية وتأثيرها على الرصيد المتبقي مباشرة',
+                'sim-outcome': 'النتائج التقديرية الحية',
+                'sim-total-calc': 'مجموع الميزانية المقترح',
+                'sim-state': 'حالة الأمان والادخار',
+                'sim-savings': 'المبلغ المتوفر للادخار',
+                'sim-btn-apply': 'اعتماد هذه الميزانية',
+                'modal-title': 'تسجيل معاملة جديدة',
+                'modal-title-edit': 'تعديل المعاملة الحالية',
+                'lbl-date': 'التاريخ',
+                'lbl-item': 'التفاصيل والبيان',
+                'lbl-cat': 'الفئة',
+                'lbl-method': 'طريقة الدفع',
+                'lbl-amount': 'المبلغ المالي',
+                'btn-save': 'حفظ المعاملة',
+                'btn-update': 'تحديث التعديلات',
+                'opt-all-cats': 'كل الفئات',
+                'opt-all-methods': 'كل طرق الدفع',
+                'cat-groceries': 'بقالة',
+                'cat-installments': 'أقساط',
+                'cat-utilities': 'فواتير',
+                'cat-leisure': 'ترفيه',
+                'method-cash': 'كاش',
+                'method-visa': 'فيزا',
+                'method-online': 'أونلاين',
+                'total-filtered': 'إجمالي الفلترة الحالية:',
+                'sim-val-groceries': 'ميزانية البقالة والأغذية',
+                'sim-val-installments': 'ميزانية الديون والأقساط',
+                'sim-val-utilities': 'ميزانية الفواتير والخدمات العامة',
+                'lbl-type': 'نوع المعاملة',
+                'type-expense': 'مصروف',
+                'type-income': 'دخل',
+                'lbl-source': 'مصدر الدخل المالي',
+                'confirm-delete-title': 'هل أنت متأكد؟',
+                'confirm-delete-desc': 'سيتم حذف هذا البند نهائياً من سجل المعاملات اليومية والرسوم البيانية.',
+                'confirm-delete-btn-label': 'نعم، احذف',
+                'btn-cancel': 'إلغاء',
+                'btn-print': 'طباعة',
+                'monthly-view-title': 'عرض وتصفية البيانات شهراً بشهر لعام 2026',
+                'all-months': 'كل الشهور',
+                'm-01': 'يناير',
+                'm-02': 'فبراير',
+                'm-03': 'مارس',
+                'm-04': 'أبريل',
+                'm-05': 'مايو',
+                'm-06': 'يونيو',
+                'm-07': 'يوليو',
+                'm-08': 'أغسطس',
+                'm-09': 'سبتمبر',
+                'm-10': 'أكتوبر',
+                'm-11': 'نوفمبر',
+                'm-12': 'ديسمبر',
+                // New additions
+                'budget-settings-title': 'تعديل قيم الميزانية والمستهدفات',
+                'lbl-total-budget-limit': 'إجمالي الميزانية المخططة للمصاريف (شهرياً)',
+                'lbl-limit-groceries': 'الحد الأقصى للبقالة والأغذية',
+                'lbl-limit-installments': 'الحد الأقصى للديون والأقساط',
+                'lbl-limit-utilities': 'الحد الأقصى للفواتير والكهرباء',
+                'lbl-limit-leisure': 'الحد الأقصى للترفيه والخروجات',
+                'btn-save-budget-settings': 'حفظ وتحديث الميزانية',
+                'alert-exceeded': 'تنبيه تجاوز حد الميزانية للفئة:',
+                'alert-exceeded-msg': 'لقد تخطيت الحد الأقصى للمصاريف المخصصة لهذه الفئة للشهر الحالي!'
+            },
+            en: {
+                'app-title': 'Smart Expense',
+                'app-sub': 'Professional 2026 Tracker',
+                'menu-dashboard': 'Dashboard',
+                'menu-expenses': 'Ledger & Expenses',
+                'menu-categories': 'Groceries Analysis',
+                'menu-debits': 'Debts & Installments',
+                'menu-simulator': 'Budget Simulator',
+                'sidebar-footer': 'Linked to:',
+                'title-dashboard': 'Quick Dashboard',
+                'title-expenses': 'Detailed Ledger Logs',
+                'title-categories': 'Food & Groceries analysis',
+                'title-debits': 'Credit Card & Debt Ledger',
+                'title-simulator': 'Budget Simulator & Scenarios',
+                'btn-add-expense': 'Add Expense',
+                'btn-add-income': 'Add Income',
+                'kpi-budget': 'Monthly Spending Budget',
+                'kpi-spent': 'Total Expenses',
+                'kpi-remaining': 'Remaining Balance',
+                'kpi-debts': 'Active Installments',
+                'kpi-budget-note': 'Total registered planned budget limit',
+                'kpi-spent-note': 'Spent percentage ratio of budget',
+                'kpi-remaining-note': 'Active savings safety buffer',
+                'kpi-debts-note': 'Logged inside payments plan',
+                'chart-trend-title': 'Expense Trend Curve 2026',
+                'chart-trend-desc': 'Monitor peaks and valleys interactively',
+                'chart-trend-legend': 'Spending rate',
+                'chart-pie-title': 'Expense Share by Category',
+                'chart-pie-desc': 'Locate the biggest leak holes',
+                'chart-method-title': 'Payment Methods Comparison',
+                'chart-method-desc': 'Cash, Credit, or online transactions',
+                'recent-title': 'Recent Operations Log',
+                'recent-desc': 'Live updates for newest entered values',
+                'view-all': 'View All',
+                'th-date': 'Date',
+                'th-item': 'Details / Items',
+                'th-cat': 'Category',
+                'th-method': 'Method',
+                'th-amount': 'Amount',
+                'th-action': 'Actions',
+                'currency': 'EGP',
+                'groceries-detail-title': 'Granular Food & Groceries Breakdown',
+                'groceries-detail-desc': 'Inspired directly from Food & Groceries UC spreadsheet',
+                'groceries-summary-title': 'Total Grocery Sector',
+                'groceries-summary-text': 'These data rows map directly to your worksheet. Use this sector analysis to keep tabs on critical subcategories like Meat, basic groceries, delivery, and bakery.',
+                'sub-meat': 'Tier 2',
+                'sub-delivery': 'Tier 3',
+                'sub-staples': 'Staples & Grains',
+                'debits-active-title': 'Active Scheduled Installment plans',
+                'debits-info-title': 'Credit Card and Installments Management',
+                'debits-info-p1': 'Your Debit overview sheet coordinates web and visa installments carefully to maintain an outstanding credit profile.',
+                'debits-info-p2': 'Keeping credit usage in view protects your rating from late fees and keeps interests at absolute zero.',
+                'debits-warning': 'Pro-tip: It is highly advised that installments do not exceed 35% of your net monthly income.',
+                'sim-title': 'Interactive Budget Simulator',
+                'sim-desc': 'Experiment with budget bounds and see live calculation offsets immediately',
+                'sim-outcome': 'Live Calculation Yields',
+                'sim-total-calc': 'Suggested Total Budget',
+                'sim-state': 'Savings Safety state',
+                'sim-savings': 'Available Savings Margin',
+                'sim-btn-apply': 'Apply Simulated Budget',
+                'modal-title': 'Record New Transaction',
+                'modal-title-edit': 'Edit Current Transaction',
+                'lbl-date': 'Date',
+                'lbl-item': 'Transaction Details',
+                'lbl-cat': 'Category',
+                'lbl-method': 'Payment Mode',
+                'lbl-amount': 'Financial Amount',
+                'btn-save': 'Save Transaction',
+                'btn-update': 'Update Changes',
+                'opt-all-cats': 'All Categories',
+                'opt-all-methods': 'All Methods',
+                'cat-groceries': 'Groceries',
+                'cat-installments': 'Installments',
+                'cat-utilities': 'Utilities',
+                'cat-leisure': 'Leisure',
+                'method-cash': 'Cash',
+                'method-visa': 'Visa',
+                'method-online': 'Online',
+                'total-filtered': 'Filtered total:',
+                'sim-val-groceries': 'Value Budget',
+                'sim-val-installments': 'Debts & Repayment Budget',
+                'sim-val-utilities': 'Utilities & Services Budget',
+                'lbl-type': 'Transaction Type',
+                'type-expense': 'Expense',
+                'type-income': 'Income',
+                'lbl-source': 'Income Source',
+                'confirm-delete-title': 'Are you sure?',
+                'confirm-delete-desc': 'This action will permanently delete this item from history and charts.',
+                'confirm-delete-btn-label': 'Yes, Delete',
+                'btn-cancel': 'Cancel',
+                'btn-print': 'Print',
+                'monthly-view-title': 'Filter Dashboard Month-by-Month (2026)',
+                'all-months': 'All Months',
+                'm-01': 'January',
+                'm-02': 'February',
+                'm-03': 'March',
+                'm-04': 'April',
+                'm-05': 'May',
+                'm-06': 'June',
+                'm-07': 'July',
+                'm-08': 'August',
+                'm-09': 'September',
+                'm-10': 'October',
+                'm-11': 'November',
+                'm-12': 'December',
+                // New additions
+                'budget-settings-title': 'Edit Budget Limits & Targets',
+                'lbl-total-budget-limit': 'Total Planned Monthly Budget Target',
+                'lbl-limit-groceries': 'Max Budget for Groceries',
+                'lbl-limit-installments': 'Max Budget for Installments',
+                'lbl-limit-utilities': 'Max Budget for Utilities',
+                'lbl-limit-leisure': 'Max Budget for Leisure',
+                'btn-save-budget-settings': 'Apply Budget Targets',
+                'alert-exceeded': 'Category Budget Exceeded Warning:',
+                'alert-exceeded-msg': 'You have exceeded the set spending limit for this category this month!'
+            }
+        };
+
+        // Charts references
+        let chartTrendInstance = null;
+        let chartCategoriesInstance = null;
+        let chartMethodsInstance = null;
+        let chartFoodInstance = null;
+
+        // Initialize App on DOM Loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMonthPills();
+            renderDashboard();
+            initCharts();
+        });
+
+        // Render Monthly selector pills dynamically
+        function renderMonthPills() {
+            const container = document.getElementById('monthly-pills-container');
+            container.innerHTML = '';
+
+            const months = [
+                { key: 'all', i18n: 'all-months' },
+                { key: '01', i18n: 'm-01' },
+                { key: '02', i18n: 'm-02' },
+                { key: '03', i18n: 'm-03' },
+                { key: '04', i18n: 'm-04' },
+                { key: '05', i18n: 'm-05' },
+                { key: '06', i18n: 'm-06' },
+                { key: '07', i18n: 'm-07' },
+                { key: '08', i18n: 'm-08' },
+                { key: '09', i18n: 'm-09' },
+                { key: '10', i18n: 'm-10' },
+                { key: '11', i18n: 'm-11' },
+                { key: '12', i18n: 'm-12' },
+            'ديسمبر'
+        ];
+
+            months.forEach(m => {
+                const btn = document.createElement('button');
+                btn.className = getPillClass(m.key);
+                btn.innerText = translations[currentLanguage][m.i18n];
+                btn.onclick = () => selectMonthFilter(m.key);
+                btn.id = `pill-month-${m.key}`;
+                container.appendChild(btn);
+            });
+        }
+
+        function getPillClass(key) {
+            const base = "px-4 py-2 rounded-xl text-xs lg:text-sm font-semibold whitespace-nowrap transition-all border shrink-0 ";
+            if (selectedMonth === key) {
+                return base + "bg-navy-900 text-white border-navy-900 shadow-sm font-bold scale-105";
+            } else {
+                return base + "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300";
+            }
+        }
+
+        // Apply month change and redraw statistics
+        function selectMonthFilter(monthKey) {
+            selectedMonth = monthKey;
+            
+            const pills = document.querySelectorAll('[id^="pill-month-"]');
+            pills.forEach(p => {
+                const pKey = p.id.replace('pill-month-', '');
+                p.className = getPillClass(pKey);
+            });
+
+            const labelKey = selectedMonth === 'all' ? 'all-months' : `m-${selectedMonth}`;
+            document.getElementById('selected-month-indicator').innerText = translations[currentLanguage][labelKey];
+
+            // Trigger updates
+            renderDashboard();
+            initCharts();
+            if (currentTab === 'expenses') renderExpensesTable();
+            if (currentTab === 'categories') renderCategoryAnalysis();
+        }
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            const tabs = ['dashboard', 'expenses', 'categories', 'debits', 'simulator'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-navy-800 hover:text-white font-medium transition-all group";
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).className = "flex items-center gap-4 px-4 py-3.5 rounded-xl bg-navy-800 text-white font-semibold transition-all shadow-md group";
+
+            const translationKey = `title-${tabId}`;
+            document.getElementById('page-title').setAttribute('data-i18n', translationKey);
+            document.getElementById('page-title').innerText = translations[currentLanguage][translationKey];
+
+            if (tabId === 'expenses') {
+                renderExpensesTable();
+            } else if (tabId === 'categories') {
+                renderCategoryAnalysis();
+            } else if (tabId === 'debits') {
+                renderDebitsOverview();
+            } else if (tabId === 'simulator') {
+                runSimulation();
+            }
+        }
+
+        // Language Switcher
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+            document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLanguage;
+            
+            document.getElementById('lang-btn-text').innerText = currentLanguage === 'ar' ? 'English' : 'العربية';
+            
+            if (currentLanguage === 'en') {
+                document.body.style.fontFamily = "'Inter', 'Cairo', sans-serif";
+            } else {
+                document.body.style.fontFamily = "'Cairo', 'Inter', sans-serif";
+            }
+
+            const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+            elementsToTranslate.forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[currentLanguage][key]) {
+                    elem.innerText = translations[currentLanguage][key];
+                }
+            });
+
+            const searchInput = document.getElementById('expense-search');
+            if (searchInput) {
+                searchInput.placeholder = currentLanguage === 'ar' ? 'ابحث عن معاملة...' : 'Search log...';
+            }
+
+            renderMonthPills();
+            selectMonthFilter(selectedMonth);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('-translate-x-full') || sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full', 'translate-x-full');
+            } else {
+                const shiftClass = currentLanguage === 'ar' ? 'translate-x-full' : '-translate-x-full';
+                sidebar.classList.add(shiftClass);
+            }
+        }
+
+        function getFilteredExpensesData() {
+            if (selectedMonth === 'all') {
+                return expensesData;
+            }
+            return expensesData.filter(e => {
+                const monthPart = e.date.substring(5, 7);
+                return monthPart === selectedMonth;
+            });
+        }
+
+        function getTotals() {
+            const dataToCalc = getFilteredExpensesData();
+            let totalSpent = dataToCalc.filter(e => e.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+            let totalIncome = dataToCalc.filter(e => e.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+            let totalDebits = dataToCalc.filter(e => e.category === 'أقساط' && e.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+            
+            let remaining = Math.max(0, totalIncome - totalSpent);
+            return { totalSpent, remaining, totalDebits, totalIncome };
+        }
+
+        // Render Dashboard Stats and check limits
+        function renderDashboard() {
+            const totals = getTotals();
+            
+            // Render Editable Target Budget limit
+            document.getElementById('kpi-budget-val').innerText = budgetSettings.totalPlanned.toLocaleString();
+            document.getElementById('kpi-spent-val').innerText = totals.totalSpent.toLocaleString();
+            const remainingVal = Math.max(0, totals.remaining);
+        const remainingEl = document.getElementById('kpi-remaining-val');
+        const remainingNoteEl = document.querySelector('[data-i18n="kpi-remaining-note"]');
+        const remainingCard = remainingEl.closest('div');
+        
+        remainingEl.innerText = remainingVal.toLocaleString();
+        remainingEl.dataset.value = remainingVal;
+        
+        // لو وصل صفر أو أقل، نخليها أحمر ونغير الرسالة
+        if (remainingVal === 0) {
+            remainingEl.classList.remove('text-emerald-600');
+            remainingEl.classList.add('text-red-600');
+            if (remainingNoteEl) {
+                remainingNoteEl.classList.remove('text-emerald-600');
+                remainingNoteEl.classList.add('text-red-600');
+                remainingNoteEl.innerText = currentLanguage === 'ar' ? 'وصلت للحد الأقصى - لا يوجد رصيد حر متبقي' : 'Limit reached - No free balance left';
+            }
+        } else {
+            remainingEl.classList.remove('text-red-600');
+            remainingEl.classList.add('text-emerald-600');
+            if (remainingNoteEl) {
+                remainingNoteEl.classList.remove('text-red-600');
+                remainingNoteEl.classList.add('text-emerald-600');
+                remainingNoteEl.innerText = currentLanguage === 'ar' ? 'فائض أمان نشط وجاهز للادخار' : 'Active savings safety buffer';
+            }
+        }
+            document.getElementById('kpi-debts-val').innerText = totals.totalDebits.toLocaleString();
+
+            const percentRatio = budgetSettings.totalPlanned > 0 ? Math.round((totals.totalSpent / budgetSettings.totalPlanned) * 100) : 0;
+            const percentStr = currentLanguage === 'ar' ? `${percentRatio}% من إجمالي الميزانية المقررة` : `${percentRatio}% of planned budget limit`;
+            document.getElementById('kpi-spent-pct-label').innerText = percentStr;
+
+            // Trigger Alert Warnings if Category targets are exceeded
+            checkCategoryBudgetAlerts();
+
+            // Populate Recent Transactions List
+            const recentBody = document.getElementById('recent-transactions-list');
+            recentBody.innerHTML = '';
+            
+            const activeData = getFilteredExpensesData();
+            const sorted = [...activeData].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            if (sorted.length === 0) {
+                recentBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400 font-semibold">${currentLanguage === 'ar' ? 'لا توجد معاملات مسجلة في هذا الشهر.' : 'No registered operations for this month.'}</td></tr>`;
+                return;
+            }
+
+            sorted.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                
+                const catColors = {
+                    'بقالة': 'bg-accent-lime/25 text-emerald-800',
+                    'أقساط': 'bg-accent-purple/25 text-purple-900',
+                    'فواتير': 'bg-accent-orange/25 text-orange-900',
+                    'ترفيه': 'bg-sky-100 text-sky-900',
+                    'دخل': 'bg-emerald-100 text-emerald-800'
+                };
+
+                const categoryLabel = translations[currentLanguage][`cat-${t.category === 'بقالة' ? 'groceries' : t.category === 'أقساط' ? 'installments' : t.category === 'فواتير' ? 'utilities' : t.category === 'ترفيه' ? 'leisure' : 'income'}`] || t.category;
+                const methodLabel = translations[currentLanguage][`method-${t.method === 'كاش' ? 'cash' : t.method === 'فيزا' ? 'visa' : 'online'}`] || t.method;
+
+                const amountColor = t.type === 'income' ? 'text-emerald-600 font-bold' : 'text-navy-800';
+                const amountPrefix = t.type === 'income' ? '+' : '';
+
+                tr.innerHTML = `
+                    <td class="py-4 font-inter text-slate-500">${t.date}</td>
+                    <td class="py-4 text-slate-800">${t.item}</td>
+                    <td class="py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${catColors[t.category] || 'bg-slate-100'}">${categoryLabel}</span>
+                    </td>
+                    <td class="py-4 text-slate-500 font-medium">${methodLabel}</td>
+                    <td class="py-4 text-left rtl:text-left ltr:text-right font-inter font-bold ${amountColor}">${amountPrefix}${t.amount.toLocaleString()} ${translations[currentLanguage]['currency']}</td>
+                `;
+                recentBody.appendChild(tr);
+            });
+        }
+
+        function checkCategoryBudgetAlerts() {
+            const activeData = getFilteredExpensesData();
+            const alertContainer = document.getElementById('budget-alerts-container');
+            alertContainer.innerHTML = '';
+
+            const groceriesSpent = activeData.filter(e => e.category === 'بقالة' && e.type === 'expense').reduce((a,c)=>a+c.amount, 0);
+            const instSpent = activeData.filter(e => e.category === 'أقساط' && e.type === 'expense').reduce((a,c)=>a+c.amount, 0);
+            const utilSpent = activeData.filter(e => e.category === 'فواتير' && e.type === 'expense').reduce((a,c)=>a+c.amount, 0);
+            const leisureSpent = activeData.filter(e => e.category === 'ترفيه' && e.type === 'expense').reduce((a,c)=>a+c.amount, 0);
+
+            let breaches = [];
+
+            if (groceriesSpent > budgetSettings.groceriesLimit) {
+                breaches.push({ catKey: 'cat-groceries', limit: budgetSettings.groceriesLimit, spent: groceriesSpent });
+            }
+            if (instSpent > budgetSettings.installmentsLimit) {
+                breaches.push({ catKey: 'cat-installments', limit: budgetSettings.installmentsLimit, spent: instSpent });
+            }
+            if (utilSpent > budgetSettings.utilitiesLimit) {
+                breaches.push({ catKey: 'cat-utilities', limit: budgetSettings.utilitiesLimit, spent: utilSpent });
+            }
+            if (leisureSpent > budgetSettings.leisureLimit) {
+                breaches.push({ catKey: 'cat-leisure', limit: budgetSettings.leisureLimit, spent: leisureSpent });
+            }
+
+            if (breaches.length > 0) {
+                alertContainer.classList.remove('hidden');
+                breaches.forEach(b => {
+                    const catTitle = translations[currentLanguage][b.catKey];
+                    const warningBox = document.createElement('div');
+                    warningBox.className = "p-4 bg-red-50 text-red-800 border border-red-200 rounded-xl text-xs lg:text-sm font-semibold flex items-center gap-3 shadow-sm";
+                    warningBox.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation text-lg text-red-500 flex-shrink-0"></i>
+                        <div>
+                            <span class="font-bold">${translations[currentLanguage]['alert-exceeded']} ${catTitle}</span>
+                            <p class="font-normal mt-0.5">${translations[currentLanguage]['alert-exceeded-msg']} (الصرف: ${b.spent.toLocaleString()} ج.م / المسموح: ${b.limit.toLocaleString()} ج.م)</p>
+                        </div>
+                    `;
+                    alertContainer.appendChild(warningBox);
+                });
+            } else {
+                alertContainer.classList.add('hidden');
+            }
+        }
+
+        function initCharts() {
+            if (chartTrendInstance) chartTrendInstance.destroy();
+            if (chartCategoriesInstance) chartCategoriesInstance.destroy();
+            if (chartMethodsInstance) chartMethodsInstance.destroy();
+
+            const isAr = currentLanguage === 'ar';
+            const activeData = getFilteredExpensesData();
+
+            // 1. Line/Area Chart: Trend
+            const ctxTrend = document.getElementById('chartTrend').getContext('2d');
+            let trendLabels = [];
+            let trendData = [];
+            
+            if (selectedMonth === 'all') {
+                trendLabels = isAr 
+                    ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+                    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                
+                trendData = Array(12).fill(0);
+                expensesData.filter(e => e.type === 'expense').forEach(e => {
+                    const monthIdx = parseInt(e.date.substring(5, 7)) - 1;
+                    if (monthIdx >= 0 && monthIdx < 12) {
+                        trendData[monthIdx] += e.amount;
+                    }
+                });
+
+                document.getElementById('chart-trend-title-text').innerText = isAr ? 'منحنى المصروفات الشهري لعام 2026' : 'Monthly Expense Trend 2026';
+                document.getElementById('chart-trend-desc-text').innerText = isAr ? 'مراقبة الصرف والارتفاع الإجمالي لجميع الشهور' : 'Monitor overall trends across all months';
+            } else {
+                const totalDays = new Date(2026, parseInt(selectedMonth), 0).getDate();
+                trendLabels = Array.from({length: totalDays}, (_, i) => `${i + 1}`);
+                trendData = Array(totalDays).fill(0);
+
+                activeData.filter(e => e.type === 'expense').forEach(e => {
+                    const dayIdx = parseInt(e.date.substring(8, 10)) - 1;
+                    if (dayIdx >= 0 && dayIdx < totalDays) {
+                        trendData[dayIdx] += e.amount;
+                    }
+                });
+
+                const monthName = isAr ? translations['ar'][`m-${selectedMonth}`] : translations['en'][`m-${selectedMonth}`];
+                document.getElementById('chart-trend-title-text').innerText = isAr ? `منحنى الإنفاق اليومي لشهر ${monthName}` : `Daily Expense Trend - ${monthName}`;
+                document.getElementById('chart-trend-desc-text').innerText = isAr ? 'تتبع حركة ومعدل الإنفاق يومياً للحد من الهدر المالي' : 'Track daily spend spikes to lock down leak points';
+            }
+
+            chartTrendInstance = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: isAr ? 'معدل الصرف' : 'Spending rate',
+                        data: trendData,
+                        borderColor: '#1B365D',
+                        backgroundColor: 'rgba(27, 54, 93, 0.08)',
+                        fill: true,
+                        tension: 0.35,
+                        borderWidth: 3,
+                        pointRadius: selectedMonth === 'all' ? 4 : 2,
+                        pointBackgroundColor: '#11CAA0'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            ticks: { font: { family: isAr ? 'Cairo' : 'Inter' } },
+                            grid: { color: '#E2E8F0' }
+                        },
+                        x: {
+                            ticks: { font: { family: isAr ? 'Cairo' : 'Inter' } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Doughnut Chart: Category Proportions
+            const ctxCat = document.getElementById('chartCategories').getContext('2d');
+            const catLabelsAr = ['بقالة', 'أقساط', 'فواتير', 'ترفيه'];
+            const catLabelsEn = ['Groceries', 'Installments', 'Utilities', 'Leisure'];
+
+            const groceriesTotal = activeData.filter(e => e.category === 'بقالة' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            const instTotal = activeData.filter(e => e.category === 'أقساط' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            const utilTotal = activeData.filter(e => e.category === 'فواتير' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            const leisureTotal = activeData.filter(e => e.category === 'ترفيه' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+
+            chartCategoriesInstance = new Chart(ctxCat, {
+                type: 'doughnut',
+                data: {
+                    labels: isAr ? catLabelsAr : catLabelsEn,
+                    datasets: [{
+                        data: [groceriesTotal, instTotal, utilTotal, leisureTotal],
+                        backgroundColor: ['#DCFD8B', '#BC84EE', '#FF823A', '#38BDF8'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '72%'
+                }
+            });
+
+            // 3. Bar Chart: Payment Methods
+            const ctxMethod = document.getElementById('chartMethods').getContext('2d');
+            const cashSum = activeData.filter(e => e.method === 'كاش' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            const visaSum = activeData.filter(e => e.method === 'فيزا' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            const onlineSum = activeData.filter(e => e.method === 'أونلاين' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+
+            chartMethodsInstance = new Chart(ctxMethod, {
+                type: 'bar',
+                data: {
+                    labels: isAr ? ['كاش', 'فيزا', 'أونلاين'] : ['Cash', 'Visa', 'Online'],
+                    datasets: [{
+                        data: [cashSum, visaSum, onlineSum],
+                        backgroundColor: ['#1B365D', '#11CAA0', '#FF823A'],
+                        borderRadius: 8,
+                        barThickness: 28
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#F1F5F9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Render Expenses Table
+        function renderExpensesTable() {
+            const searchQuery = document.getElementById('expense-search').value.toLowerCase();
+            const catFilter = document.getElementById('expense-cat-filter').value;
+            const methodFilter = document.getElementById('expense-method-filter').value;
+
+            const tbody = document.getElementById('expenses-table-body');
+            tbody.innerHTML = '';
+
+            const activeData = getFilteredExpensesData();
+
+            let filtered = activeData.filter(e => {
+                const matchSearch = e.item.toLowerCase().includes(searchQuery);
+                const matchCat = catFilter === 'all' || e.category === catFilter || (catFilter === 'دخل' && e.type === 'income');
+                const matchMethod = methodFilter === 'all' || e.method === methodFilter;
+                return matchSearch && matchCat && matchMethod;
+            });
+
+            const currentFilteredTotal = filtered.reduce((acc, curr) => acc + curr.amount, 0);
+            document.getElementById('filtered-total-val').innerText = currentFilteredTotal.toLocaleString();
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400 font-semibold">${currentLanguage === 'ar' ? 'لا توجد معاملات متطابقة مع البحث والفلترة.' : 'No transactions found matching filters.'}</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+
+                const categoryLabel = translations[currentLanguage][`cat-${e.category === 'بقالة' ? 'groceries' : e.category === 'أقساط' ? 'installments' : e.category === 'فواتير' ? 'utilities' : e.category === 'ترفيه' ? 'leisure' : 'income'}`] || e.category;
+                const methodLabel = translations[currentLanguage][`method-${e.method === 'كاش' ? 'cash' : e.method === 'فيزا' ? 'visa' : 'online'}`] || e.method;
+
+                const amountColor = e.type === 'income' ? 'text-emerald-600 font-bold' : 'text-navy-900';
+                const amountPrefix = e.type === 'income' ? '+' : '';
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4.5 font-inter text-slate-500">${e.date}</td>
+                    <td class="px-6 py-4.5 text-slate-800">${e.item}</td>
+                    <td class="px-6 py-4.5">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${e.type === 'income' ? 'bg-emerald-100 text-emerald-800' : 'bg-navy-50 text-navy-800 border border-navy-100'}">${categoryLabel}</span>
+                    </td>
+                    <td class="px-6 py-4.5 text-slate-500">${methodLabel}</td>
+                    <td class="px-6 py-4.5 text-left rtl:text-left ltr:text-right font-inter font-bold ${amountColor}">${amountPrefix}${e.amount.toLocaleString()} ${translations[currentLanguage]['currency']}</td>
+                    <td class="px-6 py-4.5 text-center flex items-center justify-center gap-2">
+                        <button onclick="editExpense(${e.id})" class="text-blue-500 hover:text-blue-700 transition-colors p-2" title="${currentLanguage === 'ar' ? 'تعديل' : 'Edit'}">
+                            <i class="fa-regular fa-pen-to-square text-base"></i>
+                        </button>
+                        <button onclick="confirmDelete(${e.id})" class="text-red-500 hover:text-red-700 transition-colors p-2" title="${currentLanguage === 'ar' ? 'حذف' : 'Delete'}">
+                            <i class="fa-regular fa-trash-can text-base"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterExpenses() {
+            renderExpensesTable();
+        }
+
+        // Render Food/Groceries detailed analysis
+        function renderCategoryAnalysis() {
+            const activeData = getFilteredExpensesData();
+            const groceriesTotal = activeData.filter(e => e.category === 'بقالة' && e.type === 'expense').reduce((a,c) => a+c.amount, 0);
+            document.getElementById('groceries-sum-label').innerText = groceriesTotal.toLocaleString();
+
+            const foodData = [
+                { name: 'meat', labelAr: 'شريحة 2', labelEn: 'Tier 2', value: Math.round(groceriesTotal * 0.35), color: 'bg-red-500' },
+                { name: 'staples', labelAr: 'شريحة 1', labelEn: 'Staples & Grains', value: Math.round(groceriesTotal * 0.40), color: 'bg-amber-500' },
+                { name: 'delivery', labelAr: 'شريحة 3', labelEn: 'Delivery & Diners', value: Math.round(groceriesTotal * 0.25), color: 'bg-sky-500' },
+            ];
+
+            const container = document.getElementById('food-breakdown-list');
+            container.innerHTML = '';
+
+            const foodTotal = foodData.reduce((acc, curr) => acc + curr.value, 0) || 1;
+
+            foodData.forEach(item => {
+                const percentage = Math.round((item.value / foodTotal) * 100);
+                const title = currentLanguage === 'ar' ? item.labelAr : item.labelEn;
+
+                const block = document.createElement('div');
+                block.className = "space-y-1.5";
+                block.innerHTML = `
+                    <div class="flex justify-between text-xs text-slate-500">
+                        <span>${title}</span>
+                        <span class="font-bold font-inter text-slate-800">${item.value.toLocaleString()} ج.م (${percentage}%)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div class="${item.color} h-full rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                container.appendChild(block);
+            });
+
+            if (chartFoodInstance) chartFoodInstance.destroy();
+            const ctxFood = document.getElementById('chartFoodBreakdown').getContext('2d');
+            chartFoodInstance = new Chart(ctxFood, {
+                type: 'pie',
+                data: {
+                    labels: foodData.map(f => currentLanguage === 'ar' ? f.labelAr : f.labelEn),
+                    datasets: [{
+                        data: foodData.map(f => f.value),
+                        backgroundColor: ['#EF4444', '#F59E0B', '#0EA5E9']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // Render credit installments
+        function renderDebitsOverview() {
+            const listContainer = document.getElementById('debits-list');
+            listContainer.innerHTML = '';
+
+            const activeDebits = [
+                { name: 'قسط تكييف صالون شهري', value: 2500, paid: 5, totalMonths: 12, start: '2025-08' },
+                { name: 'قسط مشتريات نون أونلاين', value: 1200, paid: 2, totalMonths: 6, start: '2025-11' },
+                { name: 'قسط فيزا تسوق البنك الأهلي', value: 3000, paid: 8, totalMonths: 18, start: '2025-05' }
+            ];
+
+            activeDebits.forEach(deb => {
+                const percentage = Math.round((deb.paid / deb.totalMonths) * 100);
+                const remainingToPay = (deb.totalMonths - deb.paid) * deb.value;
+
+                const div = document.createElement('div');
+                div.className = "p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-4 font-semibold text-sm";
+                div.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                        <div>
+                            <h4 class="text-base text-navy-800">${deb.name}</h4>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">تاريخ البدء: ${deb.start} | قيمة القسط الشهري: <span class="font-bold text-slate-700">${deb.value.toLocaleString()} ج.م</span></p>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                            متبقي: ${remainingToPay.toLocaleString()} ج.م
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs text-slate-500">
+                            <span>التقدم المكتمل وسداد الأقساط</span>
+                            <span>${deb.paid} / ${deb.totalMonths} أشهر (${percentage}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                            <div class="bg-navy-800 h-full rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        // Simulator calculations
+        function runSimulation() {
+            const groc = parseInt(document.getElementById('sim-input-groceries').value);
+            const inst = parseInt(document.getElementById('sim-input-installments').value);
+            const util = parseInt(document.getElementById('sim-input-utilities').value);
+
+            document.getElementById('sim-val-groceries').innerText = groc.toLocaleString();
+            document.getElementById('sim-val-installments').innerText = inst.toLocaleString();
+            document.getElementById('sim-val-utilities').innerText = util.toLocaleString();
+
+            const totalSimBudget = groc + inst + util;
+            document.getElementById('sim-total-calculated').innerText = totalSimBudget.toLocaleString();
+
+            const totals = getTotals();
+            const potentialSavings = totals.totalIncome - totalSimBudget;
+            const savingsOutput = document.getElementById('sim-savings-calculated');
+            const stateOutput = document.getElementById('sim-security-status');
+
+            if (potentialSavings >= 25000) {
+                savingsOutput.innerText = `+${potentialSavings.toLocaleString()} ج.م`;
+                savingsOutput.className = "text-emerald-600 font-inter font-bold";
+                stateOutput.innerText = currentLanguage === 'ar' ? "آمن وممتاز" : "Very Secure";
+                stateOutput.className = "text-emerald-600 font-bold";
+            } else if (potentialSavings >= 10000) {
+                savingsOutput.innerText = `+${potentialSavings.toLocaleString()} ج.م`;
+                savingsOutput.className = "text-amber-600 font-inter font-bold";
+                stateOutput.innerText = currentLanguage === 'ar' ? "مقبول وحذر" : "Acceptable";
+                stateOutput.className = "text-amber-600 font-bold";
+            } else {
+                savingsOutput.innerText = `${potentialSavings.toLocaleString()} ج.م`;
+                savingsOutput.className = "text-red-600 font-inter font-bold";
+                stateOutput.innerText = currentLanguage === 'ar' ? "حرِج وتجاوز شديد" : "Over Budget Limit";
+                stateOutput.className = "text-red-600 font-bold";
+            }
+        }
+
+        function applySimulatedBudget() {
+            const groc = parseInt(document.getElementById('sim-input-groceries').value);
+            const inst = parseInt(document.getElementById('sim-input-installments').value);
+            const util = parseInt(document.getElementById('sim-input-utilities').value);
+            
+            budgetSettings.totalPlanned = groc + inst + util;
+            budgetSettings.groceriesLimit = groc;
+            budgetSettings.installmentsLimit = inst;
+            budgetSettings.utilitiesLimit = util;
+
+            renderDashboard();
+            switchTab('dashboard');
+            
+            showToast(currentLanguage === 'ar' ? 'تم تحديث واعتماد الميزانية الجديدة بنجاح في النظام!' : 'New budget configuration updated and deployed successfully!');
+        }
+
+        // Budget Settings Modal Logic
+        function openBudgetModal() {
+            const modal = document.getElementById('budget-settings-modal');
+            document.getElementById('input-total-budget').value = budgetSettings.totalPlanned;
+            document.getElementById('input-limit-groceries').value = budgetSettings.groceriesLimit;
+            document.getElementById('input-limit-installments').value = budgetSettings.installmentsLimit;
+            document.getElementById('input-limit-utilities').value = budgetSettings.utilitiesLimit;
+            document.getElementById('input-limit-leisure').value = budgetSettings.leisureLimit;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 50);
+        }
+
+        function closeBudgetModal() {
+            const modal = document.getElementById('budget-settings-modal');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            modal.querySelector('.transform').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 150);
+        }
+
+        function saveBudgetSettings(event) {
+            event.preventDefault();
+            budgetSettings.totalPlanned = parseFloat(document.getElementById('input-total-budget').value);
+            budgetSettings.groceriesLimit = parseFloat(document.getElementById('input-limit-groceries').value);
+            budgetSettings.installmentsLimit = parseFloat(document.getElementById('input-limit-installments').value);
+            budgetSettings.utilitiesLimit = parseFloat(document.getElementById('input-limit-utilities').value);
+            budgetSettings.leisureLimit = parseFloat(document.getElementById('input-limit-leisure').value);
+
+            renderDashboard();
+            initCharts();
+            closeBudgetModal();
+            showToast(currentLanguage === 'ar' ? 'تم تحديث أهداف ومستهدفات الميزانية بنجاح!' : 'Budget target limits updated successfully!');
+        }
+
+        // Toasts
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            const msgEl = document.getElementById('toast-message');
+            const iconWrapper = document.getElementById('toast-icon-wrapper');
+            
+            msgEl.innerText = message;
+            
+            if (type === 'success') {
+                iconWrapper.className = "w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0";
+                iconWrapper.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i>`;
+            } else {
+                iconWrapper.className = "w-8 h-8 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center flex-shrink-0";
+                iconWrapper.innerHTML = `<i class="fa-solid fa-circle-exclamation text-lg"></i>`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                dismissToast();
+            }, 5000);
+        }
+
+        function dismissToast() {
+            const toast = document.getElementById('custom-toast');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-20', 'opacity-0');
+        }
+
+        // Modal fields toggle
+        function openModal(defaultType = 'expense') {
+            const modal = document.getElementById('expense-modal');
+            
+            if (editId === null) {
+                document.getElementById('modal-heading-text').setAttribute('data-i18n', 'modal-title');
+                document.getElementById('modal-heading-text').innerText = translations[currentLanguage]['modal-title'];
+                
+                document.getElementById('btn-submit-action').setAttribute('data-i18n', 'btn-save');
+                document.getElementById('btn-submit-action').innerText = translations[currentLanguage]['btn-save'];
+
+                document.getElementById('form-type').value = defaultType;
+                document.getElementById('form-type').disabled = false;
+                
+                document.getElementById('form-item').value = '';
+                document.getElementById('form-amount').value = '';
+                document.getElementById('form-date').valueAsDate = new Date();
+            } else {
+                document.getElementById('modal-heading-text').setAttribute('data-i18n', 'modal-title-edit');
+                document.getElementById('modal-heading-text').innerText = translations[currentLanguage]['modal-title-edit'];
+                
+                document.getElementById('btn-submit-action').setAttribute('data-i18n', 'btn-update');
+                document.getElementById('btn-submit-action').innerText = translations[currentLanguage]['btn-update'];
+            }
+
+            toggleModalFields();
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 50);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('expense-modal');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            modal.querySelector('.transform').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                editId = null;
+            }, 150);
+        }
+
+        function toggleModalFields() {
+            const type = document.getElementById('form-type').value;
+            const expFields = document.getElementById('dynamic-expense-fields');
+            const incFields = document.getElementById('dynamic-income-fields');
+            const labelItem = document.getElementById('lbl-item-desc');
+            const inputItem = document.getElementById('form-item');
+
+            if (type === 'income') {
+                expFields.classList.add('hidden');
+                incFields.classList.remove('hidden');
+                labelItem.innerText = currentLanguage === 'ar' ? 'مصدر الدخل المالي / البيان' : 'Income Source / Details';
+                inputItem.placeholder = currentLanguage === 'ar' ? 'مثال: راتب الشركة، أرباح استشارات' : 'e.g. Company Salary, Freelance project';
+            } else {
+                expFields.classList.remove('hidden');
+                incFields.classList.add('hidden');
+                labelItem.innerText = currentLanguage === 'ar' ? 'البند والتفاصيل' : 'Transaction Details';
+                inputItem.placeholder = currentLanguage === 'ar' ? 'مثال: شراء دجاج ولحوم' : 'e.g. Grocery shopping';
+            }
+        }
+
+        function editExpense(id) {
+            const target = expensesData.find(e => e.id === id);
+            if (!target) return;
+
+            editId = id;
+
+            document.getElementById('form-type').value = target.type;
+            document.getElementById('form-type').disabled = true;
+            document.getElementById('form-date').value = target.date;
+            document.getElementById('form-item').value = target.item;
+            document.getElementById('form-amount').value = target.amount;
+
+            if (target.type === 'income') {
+                document.getElementById('form-income-cat').value = target.category;
+            } else {
+                document.getElementById('form-cat').value = target.category;
+                document.getElementById('form-method').value = target.method;
+            }
+
+            openModal(target.type);
+        }
+
+        function saveExpense(event) {
+            event.preventDefault();
+            
+            const type = document.getElementById('form-type').value;
+            const date = document.getElementById('form-date').value;
+            const item = document.getElementById('form-item').value;
+            const amount = parseFloat(document.getElementById('form-amount').value);
+
+            let category, method;
+
+            if (type === 'income') {
+                category = document.getElementById('form-income-cat').value;
+                method = 'أونلاين';
+            } else {
+                category = document.getElementById('form-cat').value;
+                method = document.getElementById('form-method').value;
+            }
+
+            if (editId !== null) {
+                const index = expensesData.findIndex(e => e.id === editId);
+                if (index !== -1) {
+                    expensesData[index].date = date;
+                    expensesData[index].item = item;
+                    expensesData[index].category = category;
+                    expensesData[index].method = method;
+                    expensesData[index].amount = amount;
+                }
+                showToast(currentLanguage === 'ar' ? 'تم تحديث بيانات المعاملة بنجاح!' : 'Transaction details updated successfully!');
+            } else {
+                const newExp = {
+                    id: Date.now(),
+                    date,
+                    item,
+                    category,
+                    method,
+                    amount,
+                    type
+                };
+                expensesData.push(newExp);
+                showToast(currentLanguage === 'ar' ? 'تم إضافة وتسجيل المعاملة بنجاح!' : 'New transaction recorded successfully!');
+                
+                const addedMonth = date.substring(5, 7);
+                if (selectedMonth !== 'all' && selectedMonth !== addedMonth) {
+                    selectMonthFilter(addedMonth);
+                }
+            }
+
+            renderDashboard();
+            initCharts();
+            if (currentTab === 'expenses') renderExpensesTable();
+            if (currentTab === 'categories') renderCategoryAnalysis();
+            closeModal();
+        }
+
+        function confirmDelete(id) {
+            deleteTargetId = id;
+            const modal = document.getElementById('custom-confirm-modal');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 50);
+
+            document.getElementById('confirm-delete-btn').onclick = function() {
+                executeDelete();
+            };
+        }
+
+        function closeConfirmDelete() {
+            const modal = document.getElementById('custom-confirm-modal');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            modal.querySelector('.transform').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                deleteTargetId = null;
+            }, 150);
+        }
+
+        function executeDelete() {
+            if (deleteTargetId !== null) {
+                expensesData = expensesData.filter(e => e.id !== deleteTargetId);
+                renderDashboard();
+                initCharts();
+                if (currentTab === 'expenses') renderExpensesTable();
+                if (currentTab === 'categories') renderCategoryAnalysis();
+                
+                showToast(currentLanguage === 'ar' ? 'تم حذف المعاملة بنجاح!' : 'Transaction removed successfully!', 'success');
+            }
+            closeConfirmDelete();
+        }
+    
+        
+        // Currency handling
+        let currentCurrency = 'EGP';
+        const currencyRates = { EGP: 1, USD: 0.032, EUR: 0.029, SAR: 0.12 };
+        const currencySymbols = { EGP: 'ج.م', USD: '$', EUR: '€', SAR: 'ر.س' };
+
+        function changeCurrency() {
+            currentCurrency = document.getElementById('currency-select').value;
+            // Update all currency labels
+            document.querySelectorAll('[data-i18n="currency"]').forEach(el => {
+                el.innerText = currencySymbols[currentCurrency];
+            });
+            renderDashboard();
+            renderExpensesTable();
+            initCharts();
+        }
+
+        // Override amount formatting to use currency
+        const originalRenderDashboard = renderDashboard;
+        renderDashboard = function() {
+            originalRenderDashboard();
+            // Update displayed values with conversion
+            const rate = currencyRates[currentCurrency];
+            ['kpi-budget-val','kpi-spent-val','kpi-remaining-val','kpi-debts-val'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    const raw = parseFloat(el.innerText.replace(/,/g,''));
+                    if(!isNaN(raw)) {
+                        el.innerText = Math.round(raw * rate).toLocaleString();
+                    }
+                }
+            });
+        };
+
+        // Installment calculation
+        document.addEventListener('DOMContentLoaded', () => {
+            const isInstallment = document.getElementById('isInstallment');
+            const installmentDetails = document.getElementById('installmentDetails');
+            const installmentMonths = document.getElementById('installmentMonths');
+            const monthlyAmount = document.getElementById('monthlyAmount');
+            const formAmount = document.getElementById('form-amount');
+            
+            if(isInstallment) {
+                isInstallment.addEventListener('change', () => {
+                    installmentDetails.classList.toggle('hidden', !isInstallment.checked);
+                    document.getElementById('installmentSection').classList.toggle('hidden', document.getElementById('form-type').value === 'income');
+                    calculateInstallment();
+                });
+            }
+            if(formAmount) formAmount.addEventListener('input', calculateInstallment);
+            if(installmentMonths) installmentMonths.addEventListener('input', calculateInstallment);
+            
+            function calculateInstallment() {
+                const total = parseFloat(formAmount.value) || 0;
+                const months = parseInt(installmentMonths.value) || 1;
+                if(monthlyAmount) monthlyAmount.value = months > 0 ? (total/months).toFixed(2) + ' ' + currencySymbols[currentCurrency] : '';
+            }
+        });
+
+        // Installment Plan Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const isInstallment = document.getElementById('isInstallment');
+            const installmentDetails = document.getElementById('installmentDetails');
+            const installmentSection = document.getElementById('installmentSection');
+            const amountInput = document.getElementById('transactionAmount');
+            const monthsInput = document.getElementById('installmentMonths');
+            const monthlyAmount = document.getElementById('monthlyAmount');
+            
+            // Show installment section only for expenses
+            function toggleInstallmentSection() {
+                if(installmentSection) installmentSection.classList.remove('hidden');
+            }
+            
+            if(isInstallment) {
+                isInstallment.addEventListener('change', function() {
+                    installmentDetails.classList.toggle('hidden', !this.checked);
+                    calculateMonthly();
+                });
+            }
+            
+            function calculateMonthly() {
+                if(!amountInput || !monthsInput || !monthlyAmount) return;
+                const total = parseFloat(amountInput.value) || 0;
+                const months = parseInt(monthsInput.value) || 1;
+                monthlyAmount.value = (total / months).toFixed(2) + ' ريال';
+            }
+            
+            if(amountInput) amountInput.addEventListener('input', calculateMonthly);
+            if(monthsInput) monthsInput.addEventListener('input', calculateMonthly);
+        });
+
+    </script>
+
+    <!-- نظام الحفظ المُحدث - متوافق مع expensesData -->
+    <div id="save-toast" class="fixed bottom-5 right-5 bg-navy-800 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
+        <i class="fas fa-check-circle text-accent-teal mr-2"></i>
+        <span>تم حفظ البيانات بنجاح</span>
+    </div>
+
+    <script>
+    (function() {
+        const STORAGE_KEY = 'smart_expense_tracker_2026_data';
+        
+        // حفظ بعد كل إضافة أو تعديل
+        function persistData() {
+            try {
+                const dataToSave = {
+                    expensesData: typeof expensesData !== 'undefined' ? expensesData : [],
+                    lastUpdated: new Date().toISOString()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+                
+            } catch (e) {
+                console.error('خطأ في الحفظ:', e);
+            }
+        }
+        
+        // تحميل البيانات عند البداية
+        function restoreData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.expensesData && Array.isArray(data.expensesData)) {
+                        // استبدل المصفوفة الموجودة
+                        if (typeof expensesData !== 'undefined') {
+                            expensesData.length = 0; // تفريغ
+                            expensesData.push(...data.expensesData); // إضافة البيانات المحفوظة
+                        } else {
+                            window.expensesData = data.expensesData;
+                        }
+                        
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.error('خطأ في الاسترجاع:', e);
+            }
+            return false;
+        }
+        
+        // زرار حفظ يدوي
+        function manualSave() {
+            persistData();
+            const toast = document.getElementById('save-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2000);
+        }
+        
+        // Hook على function الحفظ الموجودة
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. استرجع البيانات أولاً
+            restoreData();
+            
+            // 2. أضف زرار الحفظ
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'fixed top-5 left-5 bg-accent-teal hover:bg-accent-teal/80 text-navy-900 font-bold px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 transition-all';
+            saveBtn.innerHTML = '<i class="fas fa-save"></i><span>حفظ البيانات</span>';
+            saveBtn.onclick = manualSave;
+            document.body.appendChild(saveBtn);
+            
+            // 3. Hook على saveExpense عشان يحفظ تلقائي
+            const originalSaveExpense = window.saveExpense;
+            if (typeof originalSaveExpense === 'function') {
+                window.saveExpense = function(event) {
+                    const result = originalSaveExpense.call(this, event);
+                    setTimeout(persistData, 100); // احفظ بعد الإضافة
+                    return result;
+                };
+            }
+            
+            // 4. Hook على editExpense
+            const originalEditExpense = window.editExpense;
+            if (typeof originalEditExpense === 'function') {
+                window.editExpense = function(id) {
+                    const result = originalEditExpense.call(this, id);
+                    setTimeout(persistData, 100);
+                    return result;
+                };
+            }
+            
+            // 5. حفظ قبل إغلاق الصفحة
+            window.addEventListener('beforeunload', persistData);
+        });
+    })();
+    </script>
+
+
+<script>
+// منع إضافة مصروف لو هيخلي الرصيد بالسالب
+function validateExpenseAmount(inputElement) {
+    const amount = parseFloat(inputElement.value) || 0;
+    const currentRemaining = parseFloat(document.getElementById('kpi-remaining-val').dataset.value || 0);
+    const currentExpenseId = inputElement.dataset.editingId;
+    
+    // لو بنعدل مصروف موجود، نحسب الفرق بس
+    let oldAmount = 0;
+    if (currentExpenseId) {
+        const existing = expensesData.find(e => e.id == currentExpenseId && e.type === 'expense');
+        if (existing) oldAmount = existing.amount;
+    }
+    
+    const netIncrease = amount - oldAmount;
+    
+    if (netIncrease > currentRemaining) {
+        const maxAllowed = currentRemaining + oldAmount;
+        inputElement.value = maxAllowed;
+        alert(currentLanguage === 'ar' ? `الرصيد المتبقي لا يكفي. أقصى مبلغ مسموح: ${maxAllowed.toLocaleString()} ج.م` : `Insufficient balance. Max allowed: ${maxAllowed.toLocaleString()} EGP`);
+        return false;
+    }
+    return true;
+}
+
+// Helper to get current free balance
+function getFreeBalance() {
+    return parseFloat(document.getElementById('kpi-remaining-val').dataset.value || 0);
+}
+</script>
+
+
+<div id="view-switcher" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: #fff; padding: 8px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); display: flex; gap: 8px;">
+    <button onclick="setView('desktop')" id="btn-desktop" class="view-btn active">Desktop</button>
+    <button onclick="setView('tablet')" id="btn-tablet" class="view-btn">Tablet</button>
+    <div style="display:flex; flex-direction:column; align-items:center;"><button onclick="setView('mobile')" id="btn-mobile" class="view-btn">Mobile</button><small style="font-size:10px; color:#666; margin-top:2px;">بتكلفة إضافية</small></div>
+</div>
+<style>
+.view-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.view-btn.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+body.tablet-view {
+    max-width: 768px;
+    margin: 0 auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    min-height: 100vh;
+}
+body.mobile-view {
+    max-width: 375px;
+    margin: 0 auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    min-height: 100vh;
+}
+body.tablet-view .container, body.mobile-view .container {
+    padding: 10px !important;
+}
+</style>
+<script>
+function setView(type) {
+    document.body.classList.remove('desktop-view', 'tablet-view', 'mobile-view');
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if(type === 'desktop') {
+        document.body.classList.add('desktop-view');
+        document.getElementById('btn-desktop').classList.add('active');
+    } else if(type === 'tablet') {
+        document.body.classList.add('tablet-view');
+        document.getElementById('btn-tablet').classList.add('active');
+    } else if(type === 'mobile') {
+        document.body.classList.add('mobile-view');
+        document.getElementById('btn-mobile').classList.add('active');
+    }
+}
+// default desktop
+document.body.classList.add('desktop-view');
+</script>
+
+
+<!-- Settings Icon -->
+<div id="settings-icon" style="position: fixed; top: 10px; left: 10px; z-index: 9999; cursor: pointer; background: #fff; padding: 8px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 1v6m0 6v6m4.22-13.22l4.24 4.24M1.54 9.54l4.24 4.24M21 12h-6m-6 0H3m17.46 2.46l-4.24 4.24M7.78 16.78L3.54 21"></path>
+    </svg>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <h3 style="margin-top: 0; margin-bottom: 20px;">الإعدادات</h3>
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 500;">الاسم</label>
+            <input type="text" id="user-name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;" placeholder="ادخل اسمك">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 500;">الإيميل</label>
+            <input type="email" id="user-email" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;" placeholder="example@email.com">
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button onclick="closeSettings()" style="padding: 8px 16px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 6px; cursor: pointer;">إلغاء</button>
+            <button onclick="saveSettings()" style="padding: 8px 16px; border: none; background: #0d6efd; color: white; border-radius: 6px; cursor: pointer;">حفظ</button>
+        </div>
+        <div id="save-message" style="margin-top: 12px; text-align: center; color: green; display: none;">تم الحفظ بنجاح ✓</div>
+    </div>
+</div>
+
+
+<script>
+// Settings functionality
+document.getElementById('settings-icon').onclick = function() {
+    document.getElementById('settings-modal').style.display = 'flex';
+    loadSettings();
+}
+
+function closeSettings() {
+    document.getElementById('settings-modal').style.display = 'none';
+}
+
+function getDeviceType() {
+    if(document.body.classList.contains('mobile-view')) return 'Mobile';
+    if(document.body.classList.contains('tablet-view')) return 'Tablet';
+    return 'Desktop';
+}
+
+function saveSettings() {
+    const name = document.getElementById('user-name').value;
+    const email = document.getElementById('user-email').value;
+    
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userEmail', email);
+    
+    // Send to Google Sheets
+    const data = {
+        name: name,
+        email: email,
+        device: getDeviceType()
+    };
+    
+    fetch('https://script.google.com/macros/s/AKfycbygwzL0VaYmL5l3sY5sHdJK_dr3nY2iJeisWXWkT0wYksFwi--mqwzd4e6V5RJqlsk/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    }).then(() => {
+        
+    }).catch(err => {
+        
+    });
+    
+    const msg = document.getElementById('save-message');
+    msg.style.display = 'block';
+    setTimeout(() => {
+        msg.style.display = 'none';
+        closeSettings();
+    }, 1500);
+}
+
+function loadSettings() {
+    const name = localStorage.getItem('userName') || '';
+    const email = localStorage.getItem('userEmail') || '';
+    document.getElementById('user-name').value = name;
+    document.getElementById('user-email').value = email;
+}
+
+// Close modal when clicking outside
+document.getElementById('settings-modal').onclick = function(e) {
+    if(e.target === this) closeSettings();
+}
+
+// Load settings on page load
+window.addEventListener('load', function() {
+    loadSettings();
+    const userName = localStorage.getItem('userName');
+    if(userName) {
+        
+    }
+});
+</script>
+
+
+
+<!-- Contact Us Button -->
+<div id="contact-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #25D366; padding: 12px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        <circle cx="8" cy="10" r="1.5"/>
+        <circle cx="12" cy="10" r="1.5"/>
+        <circle cx="16" cy="10" r="1.5"/>
+    </svg>
+</div>
+
+<!-- Contact Modal -->
+<div id="contact-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <h3 style="margin-top: 0; margin-bottom: 20px; text-align: center;">تواصل معنا</h3>
+        
+        <a href="tel:01120001343" style="display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#0d6efd">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            <div>
+                <div style="font-weight: 600;">اتصال</div>
+                <div style="font-size: 14px; color: #666;">01120001343</div>
+            </div>
+        </a>
+
+        <a href="https://wa.me/201120001343" target="_blank" style="display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            <div>
+                <div style="font-weight: 600;">واتساب</div>
+                <div style="font-size: 14px; color: #666;">01120001343</div>
+            </div>
+        </a>
+
+        <a href="mailto:aahmedghanem1974@gmail.com" style="display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 16px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#EA4335">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <div>
+                <div style="font-weight: 600;">إيميل</div>
+                <div style="font-size: 14px; color: #666;">aahmedghanem1974@gmail.com</div>
+            </div>
+        </a>
+
+        <button onclick="closeContact()" style="width: 100%; padding: 10px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 6px; cursor: pointer;">إغلاق</button>
+    </div>
+</div>
+
+<script>
+// Contact Us functionality
+document.getElementById('contact-btn').onclick = function() {
+    document.getElementById('contact-modal').style.display = 'flex';
+}
+
+function closeContact() {
+    document.getElementById('contact-modal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.getElementById('contact-modal').onclick = function(e) {
+    if(e.target === this) closeContact();
+}
+
+// === تصدير CSV شغال 100% ===
+function exportToCSV() {
+    try {
+        // نجيب البيانات من localStorage مباشر
+        let data = [];
+        const keys = ['transactions', 'expenses', 'income', 'records'];
+        
+        for (let key of keys) {
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    data = parsed;
+                    break;
+                }
+            }
+        }
+        
+        if (data.length === 0) {
+            alert('لا توجد بيانات للتصدير. سجل عملية أولاً');
+            return;
+        }
+        
+        // فلتر حسب الشهر لو فيه dropdown
+        const monthSelect = document.getElementById('monthFilterDropdown') || document.getElementById('monthFilter') || document.querySelector('select');
+        if (monthSelect && monthSelect.value && monthSelect.value !== 'all') {
+            const month = parseInt(monthSelect.value);
+            data = data.filter(t => {
+                const d = new Date(t.date || t.createdAt || t.created_at || Date.now());
+                return d.getMonth() + 1 === month;
+            });
+        }
+        
+        if (data.length === 0) {
+            alert('لا توجد بيانات في الشهر المختار');
+            return;
+        }
+        
+        // نعمل CSV
+        let csv = '\ufeff'; // BOM عشان العربي يظهر صح في Excel
+        csv += 'التاريخ,الوصف,الفئة,النوع,المبلغ\n';
+        
+        data.forEach(t => {
+            const date = t.date || t.createdAt || t.created_at || '';
+            const desc = (t.description || t.name || t.title || '').replace(/,/g, ' '); // نشيل الفواصل
+            const cat = (t.category || t.type || '').replace(/,/g, ' ');
+            const type = (t.type === 'income' || t.transactionType === 'income') ? 'دخل' : 'مصروف';
+            const amount = parseFloat(t.amount || t.value || 0);
+            csv += `${date},${desc},${cat},${type},${amount}\n`;
+        });
+        
+        // الإجماليات
+        const totalIncome = data.filter(t => t.type === 'income' || t.transactionType === 'income').reduce((s, t) => s + parseFloat(t.amount || t.value || 0), 0);
+        const totalExpense = data.filter(t => t.type === 'expense' || t.transactionType === 'expense' || !t.type).reduce((s, t) => s + parseFloat(t.amount || t.value || 0), 0);
+        csv += '\n';
+        csv += `,,,إجمالي الدخل,${totalIncome}\n`;
+        csv += `,,,إجمالي المصروفات,${totalExpense}\n`;
+        csv += `,,,الصافي,${totalIncome - totalExpense}\n`;
+        
+        // تنزيل الملف
+        </script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<button id="export-btn" onclick="(function(){const t=document.querySelectorAll('table');if(!t.length){alert('مفيش جدول');return}let m=t[0];for(let x of t){if(x.rows.length>m.rows.length)m=x}const d=Array.from(m.querySelectorAll('tr')).map(tr=>Array.from(tr.querySelectorAll('td,th')).map(td=>{const c=td.cloneNode(true);c.querySelectorAll('button,svg,i').forEach(e=>e.remove());return c.innerText.trim()})).filter(r=>r.some(c=>c));if(d.length<=1){alert('الجدول فاضي');return}const ws=XLSX.utils.aoa_to_sheet(d);ws['!cols']=d[0].map(()=>({wch:18}));ws['!rtl']=true;const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'المصاريف');XLSX.writeFile(wb,'مصاريف_'+new Date().toISOString().slice(0,10)+'.xlsx');})()" style="position:fixed;bottom:100px;left:25px !important;right:auto !important;background:#10b981;color:white;width:56px;height:56px;border-radius:50%;font-size:22px;border:none;cursor:pointer;z-index:99999;box-shadow:0 4px 12px rgba(16,185,129,0.4)" title="تصدير الجدول لـ Excel">📊</button>
+
+
+<div id="contact-section" style="background:#25D366;color:white;padding:40px 20px;text-align:center;margin-top:60px">
+  <h2 style="margin:0 0 20px 0;font-size:26px">تواصل معنا</h2>
+  <a href="https://wa.me/201120001343" target="_blank" style="display:inline-block;background:white;color:#25D366;padding:15px 30px;border-radius:50px;text-decoration:none;font-size:18px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.2)">
+    📱 واتساب: 01120001343
+  </a>
+  <p style="margin:20px 0 0 0;font-size:14px;opacity:0.9">اضغط للتواصل مباشرة على واتساب</p>
+</div>
+
+
+<script>
+function updateSafetyStatus() {
+  // نحاول نلاقي إجمالي الدخل والمصاريف
+  let income = 0;
+  let expenses = 0;
+  
+  // دور على العناصر اللي فيها المبالغ
+  document.querySelectorAll('*').forEach(el => {
+    const text = el.innerText;
+    if (text.includes('الدخل') || text.includes('الإيراد')) {
+      const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+      if (!isNaN(num) && num > income) income = num;
+    }
+    if (text.includes('المصروف') || text.includes('إجمالي المصاريف')) {
+      const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+      if (!isNaN(num) && num > expenses) expenses = num;
+    }
+  });
+  
+  // لو ملقيناش، نحسب من الجدول
+  if (income === 0 || expenses === 0) {
+    const rows = document.querySelectorAll('table tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach(cell => {
+        const val = parseFloat(cell.innerText.replace(/[^0-9.-]/g, ''));
+        if (!isNaN(val)) {
+          if (val > 0) income += val;
+          else expenses += Math.abs(val);
+        }
+      });
+    });
+  }
+  
+  const remaining = income - expenses;
+  let statusMsg = '';
+  let statusColor = '';
+  
+  if (remaining > 5000) {
+    statusMsg = '✅ حالتك تمام: متبقي معاك ' + remaining.toFixed(0) + ' جنيه - أكتر من 5000ج';
+    statusColor = '#10b981';
+  } else if (remaining > 0) {
+    statusMsg = '⚠️ خد بالك: متبقي ' + remaining.toFixed(0) + ' جنيه بس - أقل من 5000ج';
+    statusColor = '#f59e0b';
+  } else {
+    statusMsg = '🚨 خطر: مصاريفك أكتر من دخلك بـ ' + Math.abs(remaining).toFixed(0) + ' جنيه';
+    statusColor = '#ef4444';
+  }
+  
+  // اعرض الرسالة
+  let statusDiv = document.getElementById('safety-status');
+  if (!statusDiv) {
+    statusDiv = document.createElement('div');
+    statusDiv.id = 'safety-status';
+    statusDiv.style.cssText = 'position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;font-weight:bold;z-index:9998;box-shadow:0 4px 12px rgba(0,0,0,0.15);max-width:300px';
+    document.body.appendChild(statusDiv);
+  }
+  statusDiv.style.background = statusColor;
+  statusDiv.style.color = 'white';
+  statusDiv.innerText = statusMsg;
+}
+
+// شغلها لما الصفحة تحمل وكل ما تتغير البيانات
+document.addEventListener('DOMContentLoaded', updateSafetyStatus);
+setInterval(updateSafetyStatus, 2000);
+</script>
+
+</body>
+</html>
