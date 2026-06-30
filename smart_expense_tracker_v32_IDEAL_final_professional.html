@@ -632,7 +632,7 @@ select.month-select, select#month, .month-dropdown {
                                         <span data-i18n="cat-groceries">ميزانية البقالة والأغذية</span>
                                         <span class="font-bold font-inter text-navy-800"><span id="sim-val-groceries">25000</span> ج.م</span>
                                     </div>
-                                    <input type="range" id="sim-input-groceries" min="1000" max="40000" step="1000" value="15000" oninput="runSimulation()" class="w-full accent-navy-800">
+                                    <input type="range" id="sim-input-groceries" min="1000" max="40000" step="1000" value="5000" oninput="runSimulation()" class="w-full accent-navy-800">
                                 </div>
 
                                 <!-- Category 2: Installments Budget -->
@@ -641,7 +641,7 @@ select.month-select, select#month, .month-dropdown {
                                         <span data-i18n="cat-installments">ميزانية الديون والأقساط</span>
                                         <span class="font-bold font-inter text-navy-800"><span id="sim-val-installments">15000</span> ج.م</span>
                                     </div>
-                                    <input type="range" id="sim-input-installments" min="1000" max="30000" step="1000" value="10000" oninput="runSimulation()" class="w-full accent-navy-800">
+                                    <input type="range" id="sim-input-installments" min="1000" max="30000" step="1000" value="5000" oninput="runSimulation()" class="w-full accent-navy-800">
                                 </div>
 
                                 <!-- Category 3: Utilities Budget -->
@@ -897,11 +897,11 @@ select.month-select, select#month, .month-dropdown {
 
         // Editable Global Budget Configurations (Limits)
         let budgetSettings = {
-            totalPlanned: 110000,
-            groceriesLimit: 30000,
-            installmentsLimit: 25000,
-            utilitiesLimit: 15000,
-            leisureLimit: 15000
+            totalPlanned: 40000,
+            groceriesLimit: 10000,
+            installmentsLimit: 10000,
+            utilitiesLimit: 10000,
+            leisureLimit: 10000
         };
 
         let expensesData = [
