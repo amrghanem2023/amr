@@ -483,7 +483,7 @@ select.month-select, select#month, .month-dropdown {
                                 <option value="أقساط" data-i18n="cat-installments">أقساط</option>
                                 <option value="فواتير" data-i18n="cat-utilities">فواتير</option>
                                 <option value="ترفيه" data-i18n="cat-leisure">ترفيه</option>
-                                <option value="دخل" data-i18n="type-income">كل الواردات المضافة</option>
+                                <option value="دخل" data-i18n="type-income">دخل بيع</option>
                             </select>
 
                             <!-- Filter Payment Method -->
@@ -514,7 +514,7 @@ select.month-select, select#month, .month-dropdown {
                                         <th class="px-6 py-4" data-i18n="th-cat">الفئة</th>
                                         <th class="px-6 py-4" data-i18n="th-method">طريقة الدفع</th>
                                         <th class="px-6 py-4 text-left rtl:text-left ltr:text-right" data-i18n="th-amount">المبلغ</th>
-                                        <th class="px-6 py-4 text-center" data-i18n="th-action">إجراءات</th>
+                                        <th class="px-6 py-4 text-center" data-i18n="th-action">ملحوظات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="expenses-table-body" class="divide-y divide-slate-100 font-semibold">
@@ -2712,6 +2712,49 @@ function updateSafetyStatus() {
 document.addEventListener('DOMContentLoaded', updateSafetyStatus);
 setInterval(updateSafetyStatus, 2000);
 </script>
+<script>
+// تحديد تاريخ انتهاء الصلاحية (10 أيام من تاريخ التفعيل)
+// يمكنك كتابة التاريخ يدوياً هنا بصيغة YYYY-MM-DD
+const EXPIRATION_DATE = new Date("2026-07-11T23:59:59"); 
 
+function checkLicense() {
+    const now = new Date();
+    
+    if (now > EXPIRATION_DATE) {
+        // مسح محتوى الصفحة بالكامل
+        document.body.innerHTML = `
+            <div style="
+                position: fixed; 
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                height: 100%; 
+                background: #102A43; 
+                color: white; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center; 
+                align-items: center; 
+                font-family: 'Cairo', sans-serif; 
+                z-index: 999999;
+                direction: rtl;
+                padding: 20px;
+                text-align: center;
+            ">
+                <i class="fas fa-lock" style="font-size: 4rem; color: #ef4444; margin-bottom: 20px;"></i>
+                <h1 style="font-size: 2rem; font-weight: bold; margin-bottom: 10px;">انتهت الفترة التجريبية</h1>
+                <p style="font-size: 1.2rem; color: #bcccdc; max-width: 500px;">
+                    لقد انتهت مدة الـ 10 أيام المخصصة لتجربة شيت المصاريف الذكي. يرجى التواصل مع المطور لتفعيل النسخة الكاملة.
+                </p>
+            </div>
+        `;
+        // إيقاف أي أكواد أخرى قد تعمل في الخلفية
+        throw new Error("License expired.");
+    }
+}
+
+// تشغيل الفحص فور تحميل الصفحة
+document.addEventListener('DOMContentLoaded', checkLicense);
+</script>
 </body>
 </html>
